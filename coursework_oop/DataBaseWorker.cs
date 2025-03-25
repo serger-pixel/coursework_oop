@@ -99,5 +99,19 @@ namespace coursework_oop
                 WHERE {Fields.ID} = {person.Id};";
             updateCommand.ExecuteNonQuery();
         }
+
+        Tenant select(int id)
+        {
+            SqliteCommand selectCommand = new SqliteCommand();
+            selectCommand.Connection = Connection;
+            selectCommand.CommandText = $@"
+                SELECT {Fields.ID}, {Fields.LAST_NAME}, {Fields.FIRST_NAME}, {Fields.APPARTAMENT_NUMB}, {Fields.RENT}, {Fields.ELECTRICITY}, {Fields.UTILITIES}
+                FROM tenants
+                    WHERE {Fields.ID} = {id};
+            ";
+            SqliteDataReader reader = selectCommand.ExecuteReader();
+            return new Tenant((int)reader[Fields.ID], (string)reader[Fields.LAST_NAME], (string)reader[Fields.FIRST_NAME], (int)reader[Fields.APPARTAMENT_NUMB],
+            (decimal)reader[Fields.RENT], (decimal)reader[Fields.ELECTRICITY], (decimal)reader[Fields.UTILITIES]);
+        }
     }
 }
