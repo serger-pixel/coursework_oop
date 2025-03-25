@@ -10,6 +10,7 @@ namespace coursework_oop
 {
     public static class Fields
     {
+        public const string ID = "_id";
         public const string LAST_NAME = "_lastName";
         public const string FIRST_NAME = "_firstName";
         public const string APPARTAMENT_NUMB = "_appartamentNumb";
@@ -32,16 +33,17 @@ namespace coursework_oop
             {
                 SqliteCommand CreateTableCommand = new SqliteCommand();
                 CreateTableCommand.Connection = Connection;
-                    CreateTableCommand.CommandText = $@"
-                    CREATE TABLE {tableName} 
-                    (
-                        {Fields.LAST_NAME} TEXT NOT NULL,
-                        {Fields.FIRST_NAME} TEXT NOT NULL,
-                        {Fields.APPARTAMENT_NUMB} INTEGER PRIMARY KEY AUTOINCREMENT,
-                        {Fields.RENT} REAL NOT NULL,
-                        {Fields.ELECTRICITY} REAL NOT NULL,
-                        {Fields.UTILITIES} REAL NOT NULL
-                    );";
+                CreateTableCommand.CommandText = $@"
+                CREATE TABLE {tableName} 
+                (
+                    {Fields.ID} INTEGER PRIMARY KEY AUTOINCREMEN,
+                    {Fields.LAST_NAME} TEXT NOT NULL,
+                    {Fields.FIRST_NAME} TEXT NOT NULL,
+                    {Fields.APPARTAMENT_NUMB} INTEGER NOT NULL,
+                    {Fields.RENT} REAL NOT NULL,
+                    {Fields.ELECTRICITY} REAL NOT NULL,
+                    {Fields.UTILITIES} REAL NOT NULL
+                );";
             }
         }
 
@@ -49,8 +51,10 @@ namespace coursework_oop
         {
             SqliteCommand addCommand = new SqliteCommand();
             addCommand.Connection = Connection;
-            addCommand.CommandText = $@"INSERT INTO {tableName} 
+            addCommand.CommandText = $@"
+            INSERT INTO {tableName} 
             (
+                {Fields.ID},
                 {Fields.LAST_NAME},
                 {Fields.FIRST_NAME},
                 {Fields.APPARTAMENT_NUMB},
@@ -66,8 +70,20 @@ namespace coursework_oop
                 {person.Rent},
                 {person.Electricity},
                 {person.Utilities}
-            )";
+            );";
+            addCommand.ExecuteNonQuery();
         }
+
+        void delete(Tenant person)
+        {
+            SqliteCommand deleteCommand = new SqliteCommand();
+            deleteCommand.Connection = Connection;
+            deleteCommand.CommandText = $@"
+            DELETE FROM {tableName}
+                WHERE {{Fields.{Fields.ID}}} = {person.Id};";
+            deleteCommand.ExecuteNonQuery();
+        }
+
 
     }
 }
