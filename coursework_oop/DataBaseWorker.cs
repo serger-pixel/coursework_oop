@@ -80,10 +80,24 @@ namespace coursework_oop
             deleteCommand.Connection = Connection;
             deleteCommand.CommandText = $@"
             DELETE FROM {tableName}
-                WHERE {{Fields.{Fields.ID}}} = {person.Id};";
+                WHERE {Fields.ID} = {person.Id};";
             deleteCommand.ExecuteNonQuery();
         }
 
-
+        void update(Tenant person)
+        {
+            SqliteCommand updateCommand = new SqliteCommand();
+            updateCommand.Connection = Connection;
+            updateCommand.CommandText = $@"
+            UPDATE tenants SET
+                {Fields.LAST_NAME} {person.LastName},
+                {Fields.FIRST_NAME} {person.FirstName},
+                {Fields.APPARTAMENT_NUMB} {person.AppartamentNumb},
+                {Fields.RENT} {person.Rent},
+                {Fields.ELECTRICITY}  {person.Electricity},
+                {Fields.UTILITIES} {person.Utilities}
+                WHERE {Fields.ID} = {person.Id};";
+            updateCommand.ExecuteNonQuery();
+        }
     }
 }
