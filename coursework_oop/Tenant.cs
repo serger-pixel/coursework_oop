@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace coursework_oop
 {
     class Tenant
-    {
-        public int Id { get; set; }
+    { 
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public int AppartamentNumb { get; set; }
@@ -18,7 +17,6 @@ namespace coursework_oop
 
         public Tenant(int id, string lastName, string firstName, int appartamentNumb, decimal rent, decimal electricity, decimal utilities)
         {
-            Id = id;
             LastName = lastName;
             FirstName = firstName;
             AppartamentNumb = appartamentNumb;
