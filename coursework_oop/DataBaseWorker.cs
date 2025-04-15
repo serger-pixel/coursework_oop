@@ -25,18 +25,21 @@ namespace coursework_oop
 
         const string tableName = "tenants";
         
-        DataBaseWorker(string fileName)
+
+        public DataBaseWorker(string path)
         {
-            Connection = new SqliteConnection(fileName);
-            Connection.Open();
-            if (!File.Exists(fileName))
+            Connection = new SqliteConnection("DataSource=" + path);
+
+            FileInfo fileInfo = new FileInfo(path);
+            if (!fileInfo.Exists)
             {
-                SqliteCommand CreateTableCommand = new SqliteCommand();
-                CreateTableCommand.Connection = Connection;
-                CreateTableCommand.CommandText = $@"
+                Connection.Open();
+                SqliteCommand createTableCommand = new SqliteCommand();
+                createTableCommand.Connection = Connection;
+                createTableCommand.CommandText = $@"
                 CREATE TABLE {tableName} 
                 (
-                    {Fields.ID} INTEGER PRIMARY KEY AUTOINCREMEN,
+                    {Fields.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
                     {Fields.LAST_NAME} TEXT NOT NULL,
                     {Fields.FIRST_NAME} TEXT NOT NULL,
                     {Fields.APPARTAMENT_NUMB} INTEGER NOT NULL,
@@ -44,10 +47,16 @@ namespace coursework_oop
                     {Fields.ELECTRICITY} REAL NOT NULL,
                     {Fields.UTILITIES} REAL NOT NULL
                 );";
+                createTableCommand.ExecuteNonQuery();
             }
+            else
+            {
+                Connection.Open();
+            }
+
         }
 
-        void add(Tenant person) 
+        public void add(Tenant person) 
         {
             SqliteCommand addCommand = new SqliteCommand();
             addCommand.Connection = Connection;
@@ -64,8 +73,9 @@ namespace coursework_oop
             )
             VALUES
             (
-                {person.LastName},
-                {person.FirstName},
+                {person.Id},
+                '{person.LastName}',
+                '{person.FirstName}',
                 {person.AppartamentNumb},
                 {person.Rent},
                 {person.Electricity},
@@ -74,7 +84,7 @@ namespace coursework_oop
             addCommand.ExecuteNonQuery();
         }
 
-        void delete(Tenant person)
+        public void delete(Tenant person)
         {
             SqliteCommand deleteCommand = new SqliteCommand();
             deleteCommand.Connection = Connection;
@@ -84,7 +94,7 @@ namespace coursework_oop
             deleteCommand.ExecuteNonQuery();
         }
 
-        void update(Tenant person)
+        public void update(Tenant person)
         {
             SqliteCommand updateCommand = new SqliteCommand();
             updateCommand.Connection = Connection;
@@ -100,7 +110,7 @@ namespace coursework_oop
             updateCommand.ExecuteNonQuery();
         }
 
-        Tenant select(int id)
+        public Tenant select(int id)
         {
             SqliteCommand selectCommand = new SqliteCommand();
             selectCommand.Connection = Connection;

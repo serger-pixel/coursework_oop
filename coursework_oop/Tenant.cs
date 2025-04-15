@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace coursework_oop
 {
-    class Tenant
+    public class Tenant
     {
         public int Id { get; set; }
         public string LastName { get; set; }
@@ -16,7 +16,7 @@ namespace coursework_oop
         public decimal Electricity { get; set; }
         public decimal Utilities { get; set; }
 
-        public Tenant(int id, string lastName, string firstName, int appartamentNumb, decimal rent, decimal electricity, decimal utilities)
+        public Tenant(int id, string firstName, string lastName, int appartamentNumb, decimal rent, decimal electricity, decimal utilities)
         {
             Id = id;
             LastName = lastName;

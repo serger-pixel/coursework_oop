@@ -2,16 +2,13 @@ namespace coursework_oop
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            DataBaseWorker worker = new DataBaseWorker("D:\\univer\\oop\\cr\\projects\\coursework_oop\\databases\\test.db");
+            Tenant person = new Tenant(10, "Sergey", "Ermakov", 100, 100, 100, 100);
+            worker.add(person);
+            
         }
     }
 }
