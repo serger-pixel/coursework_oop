@@ -8,15 +8,15 @@ namespace coursework_oop
 {
     public class Tenant
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
-        public int AppartamentNumb { get; set; }
-        public decimal Rent { get; set; }
-        public decimal Electricity { get; set; }
-        public decimal Utilities { get; set; }
+        public long AppartamentNumb { get; set; }
+        public double Rent { get; set; }
+        public double Electricity { get; set; }
+        public double Utilities { get; set; }
 
-        public Tenant(int id, string firstName, string lastName, int appartamentNumb, decimal rent, decimal electricity, decimal utilities)
+        public Tenant(long id, string firstName, string lastName, long appartamentNumb, double rent, double electricity, double utilities)
         {
             Id = id;
             LastName = lastName;

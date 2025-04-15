@@ -19,24 +19,46 @@ namespace coursework_oop
         public const string UTILITIES = "_utilities";
     }
 
+    public enum Statuses
+    {
+        NEW,
+        EXISTING
+    }
+
     public class DataBaseWorker
     {
         private SqliteConnection Connection {  get; set; }
 
         const string tableName = "tenants";
+
+        const string pathOfCopy = "/localDataBase/local.db";
+
+        public string Path;
         
-
-        public DataBaseWorker(string path)
+        public void openDataBaseEditor(string path, Statuses status)
         {
-            Connection = new SqliteConnection("DataSource=" + path);
-
-            FileInfo fileInfo = new FileInfo(path);
-            if (!fileInfo.Exists)
+            switch (status)
             {
-                Connection.Open();
-                SqliteCommand createTableCommand = new SqliteCommand();
-                createTableCommand.Connection = Connection;
-                createTableCommand.CommandText = $@"
+                case Statuses.NEW:
+                    createDataBase(path);
+                    break;
+                default:
+                    break;
+            }
+
+            File.Copy(path, pathOfCopy, overwrite: true);
+            Connection = new SqliteConnection(path);
+            Connection.Open();
+            Path = path;
+        }
+
+        public void createDataBase(string path)
+        {
+            SqliteConnection localConnection = new SqliteConnection("DataSource=" + path);
+            localConnection.Open();
+            SqliteCommand createTableCommand = new SqliteCommand();
+            createTableCommand.Connection = Connection;
+            createTableCommand.CommandText = $@"
                 CREATE TABLE {tableName} 
                 (
                     {Fields.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,16 +69,19 @@ namespace coursework_oop
                     {Fields.ELECTRICITY} REAL NOT NULL,
                     {Fields.UTILITIES} REAL NOT NULL
                 );";
-                createTableCommand.ExecuteNonQuery();
-            }
-            else
-            {
-                Connection.Open();
-            }
-
+            createTableCommand.ExecuteNonQuery();
+            localConnection.Close();
         }
 
-        public void add(Tenant person) 
+        public void deleteDataBase(string path)
+        {
+            File.Delete(path);
+            Connection.Close();
+            Connection = null;
+            Path = null;
+        }
+
+        public void addRecord(Tenant person) 
         {
             SqliteCommand addCommand = new SqliteCommand();
             addCommand.Connection = Connection;
@@ -84,25 +109,25 @@ namespace coursework_oop
             addCommand.ExecuteNonQuery();
         }
 
-        public void delete(Tenant person)
+        public void deleteRecord(int id)
         {
             SqliteCommand deleteCommand = new SqliteCommand();
             deleteCommand.Connection = Connection;
             deleteCommand.CommandText = $@"
             DELETE FROM {tableName}
-                WHERE {Fields.ID} = {person.Id};";
+                WHERE {Fields.ID} = {id};";
             deleteCommand.ExecuteNonQuery();
         }
 
-        public void update(Tenant person)
+        public void updateRecord(Tenant person)
         {
             SqliteCommand updateCommand = new SqliteCommand();
             updateCommand.Connection = Connection;
             updateCommand.CommandText = $@"
             UPDATE tenants SET
                 {Fields.LAST_NAME} {person.LastName},
-                {Fields.FIRST_NAME} {person.FirstName},
-                {Fields.APPARTAMENT_NUMB} {person.AppartamentNumb},
+                {Fields.FIRST_NAME} '{person.FirstName}',
+                {Fields.APPARTAMENT_NUMB} '{person.AppartamentNumb}',
                 {Fields.RENT} {person.Rent},
                 {Fields.ELECTRICITY}  {person.Electricity},
                 {Fields.UTILITIES} {person.Utilities}
@@ -110,7 +135,7 @@ namespace coursework_oop
             updateCommand.ExecuteNonQuery();
         }
 
-        public Tenant select(int id)
+        public Tenant selectRecord(int id)
         {
             SqliteCommand selectCommand = new SqliteCommand();
             selectCommand.Connection = Connection;
@@ -120,8 +145,10 @@ namespace coursework_oop
                     WHERE {Fields.ID} = {id};
             ";
             SqliteDataReader reader = selectCommand.ExecuteReader();
-            return new Tenant((int)reader[Fields.ID], (string)reader[Fields.LAST_NAME], (string)reader[Fields.FIRST_NAME], (int)reader[Fields.APPARTAMENT_NUMB],
-            (decimal)reader[Fields.RENT], (decimal)reader[Fields.ELECTRICITY], (decimal)reader[Fields.UTILITIES]);
+            reader.Read();
+            return new Tenant((long)reader[Fields.ID], (string)reader[Fields.LAST_NAME], (string)reader[Fields.FIRST_NAME], (long)reader[Fields.APPARTAMENT_NUMB],
+            (double)reader[Fields.RENT], (double)reader[Fields.ELECTRICITY], (double)reader[Fields.UTILITIES]);
         }
+
     }
 }

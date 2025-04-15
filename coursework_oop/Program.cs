@@ -6,9 +6,7 @@ namespace coursework_oop
         static void Main()
         {
             DataBaseWorker worker = new DataBaseWorker("D:\\univer\\oop\\cr\\projects\\coursework_oop\\databases\\test.db");
-            Tenant person = new Tenant(10, "Sergey", "Ermakov", 100, 100, 100, 100);
-            worker.add(person);
-            
+            Tenant person = worker.select(10);
         }
     }
 }
