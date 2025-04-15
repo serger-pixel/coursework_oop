@@ -73,12 +73,17 @@ namespace coursework_oop
             localConnection.Close();
         }
 
-        public void deleteDataBase(string path)
+        public void closeDataBase()
         {
-            File.Delete(path);
             Connection.Close();
             Connection = null;
             Path = null;
+        }
+
+        public void deleteDataBase()
+        {
+            File.Delete(Path);
+            closeDataBase();
         }
 
         public void addRecord(Tenant person) 
