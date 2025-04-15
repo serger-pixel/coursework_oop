@@ -5,8 +5,10 @@ namespace coursework_oop
         [STAThread]
         static void Main()
         {
-            DataBaseWorker worker = new DataBaseWorker("D:\\univer\\oop\\cr\\projects\\coursework_oop\\databases\\test.db");
-            Tenant person = worker.select(10);
+            DataBaseWorker worker = new DataBaseWorker();
+            bool result = File.Exists("D:\\univer\\oop\\cr\\projects\\coursework_oop\\databases\\test.db");
+            worker.openDataBaseEditor("D:\\univer\\oop\\cr\\projects\\coursework_oop\\databases\\test.db", Statuses.EXISTING);
+            worker.deleteDataBase();
         }
     }
 }

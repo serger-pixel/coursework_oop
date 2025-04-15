@@ -31,7 +31,7 @@ namespace coursework_oop
 
         const string tableName = "tenants";
 
-        const string pathOfCopy = "/localDataBase/local.db";
+        const string pathOfCopy = "..\\..\\..\\localDataBase\\local.db";
 
         public string Path;
         
@@ -45,9 +45,9 @@ namespace coursework_oop
                 default:
                     break;
             }
-
-            File.Copy(path, pathOfCopy, overwrite: true);
-            Connection = new SqliteConnection(path);
+            bool result = File.Exists(pathOfCopy);
+            File.Copy(path, pathOfCopy, true);
+            Connection = new SqliteConnection("DataSource=" + pathOfCopy);
             Connection.Open();
             Path = path;
         }
@@ -82,8 +82,9 @@ namespace coursework_oop
 
         public void deleteDataBase()
         {
-            File.Delete(Path);
+            string temp = Path;
             closeDataBase();
+            File.Delete(temp);
         }
 
         public void addRecord(Tenant person) 
