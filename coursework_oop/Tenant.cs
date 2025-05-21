@@ -27,13 +27,4 @@ namespace coursework_oop
             Utilities = utilities;
         }
     }
-
-    static class Regs
-    {
-        public const String names = @"^[A-Z][a-z]*$";
-
-        public const String cost = @"^(?: [1 - 9]\d*|0)(?:\,\d+)?$";
-
-        public const String flatNumb = @"^(?:[1-9]\d*|0)$";
-    }
 }

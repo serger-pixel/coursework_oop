@@ -2,9 +2,29 @@ namespace coursework_oop
 {
     public partial class Form1 : Form
     {
+        private DataBaseWorker dataBaseWorker;
         public Form1()
         {
             InitializeComponent();
+            dataBaseWorker = new DataBaseWorker();
+        }
+
+        private void openButton_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                // Настройка фильтра для типов файлов
+                openFileDialog.Filter = "Текстовые файлы (*.db)|*.db|Все файлы (*.*)|*.*";
+                openFileDialog.FilterIndex = 1; // Устанавливаем выбранный фильтр по умолчанию
+                openFileDialog.RestoreDirectory = true; // Восстанавливать текущую директорию после закрытия
+
+                // Проверяем, был ли выбран файл
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    dataBaseWorker.openDataBaseEditor(openFileDialog.FileName, Statuses.EXISTING);
+                    table.DataSource = DataBaseWorker.pathOfCopy;
+                }
+            }
         }
     }
 }

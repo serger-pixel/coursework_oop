@@ -31,11 +31,11 @@ namespace coursework_oop
 
         const string tableName = "tenants";
 
-        const string pathOfCopy = "..\\..\\..\\localDataBase\\local.db";
+        public const string pathOfCopy = "./local.db";
 
         public string Path;
         
-        public void openDataBaseEditor(string path, Statuses status)
+        public void openDataBase(string path, Statuses status)
         {
             switch (status)
             {
@@ -45,7 +45,6 @@ namespace coursework_oop
                 default:
                     break;
             }
-            bool result = File.Exists(pathOfCopy);
             File.Copy(path, pathOfCopy, true);
             Connection = new SqliteConnection("DataSource=" + pathOfCopy);
             Connection.Open();
@@ -131,12 +130,12 @@ namespace coursework_oop
             updateCommand.Connection = Connection;
             updateCommand.CommandText = $@"
             UPDATE tenants SET
-                {Fields.LAST_NAME} {person.LastName},
-                {Fields.FIRST_NAME} '{person.FirstName}',
-                {Fields.APPARTAMENT_NUMB} '{person.AppartamentNumb}',
-                {Fields.RENT} {person.Rent},
-                {Fields.ELECTRICITY}  {person.Electricity},
-                {Fields.UTILITIES} {person.Utilities}
+                {Fields.LAST_NAME} = {person.LastName},
+                {Fields.FIRST_NAME} = '{person.FirstName}',
+                {Fields.APPARTAMENT_NUMB} = '{person.AppartamentNumb}',
+                {Fields.RENT} = {person.Rent},
+                {Fields.ELECTRICITY} = {person.Electricity},
+                {Fields.UTILITIES} = {person.Utilities}
                 WHERE {Fields.ID} = {person.Id};";
             updateCommand.ExecuteNonQuery();
         }
