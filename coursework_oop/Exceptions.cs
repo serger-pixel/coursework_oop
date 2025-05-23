@@ -91,33 +91,33 @@ namespace coursework_oop
         /// <summary>
         /// Сообщение об ошибке, если значение не является целым числом.
         /// </summary>
-        public const string NotIntError = "Значение должно быть целым числом.";
+        public const string notIntError = "Значение должно быть целым числом.";
 
         /// <summary>
         /// Сообщение об ошибке, если значение не является десятичным числом.
         /// </summary>
-        public const string NotDecimalError = "Значение должно быть десятичным числом.";
+        public const string notDecimalError = "Значение должно быть десятичным числом.";
 
         /// <summary>
         /// Сообщение об ошибке, когда пользователя не существует.
         /// </summary>
-        public const string UserNotExistsError = "Такого пользователя не сущестует.";
+        public const string userNotExistsError = "Такого пользователя не сущестует.";
 
 
         /// <summary>
         /// Сообщение об ошибке, когда пользователь уже существует.
         /// </summary>
-        public const string UserAlreadyExistsError = "Такой пользователь уже существует.";
+        public const string userAlreadyExistsError = "Такой пользователь уже существует.";
 
         /// <summary>
         /// Сообщение об ошибке, когда файл не поддерживается.
         /// </summary>
-        public const string NotSupportError = "Данный файл не поддерживатся.";
+        public const string notSupportError = "Данный файл не поддерживатся.";
 
         /// <summary>
         /// Сообщение об ошибке, когда превышано максимальное кол-во проживающих в одной квартире.
         /// </summary>
-        public const string MaxCntPersonError = "Превышано максимальное кол-во жителей";
+        public const string maxCntPersonError = "Превышано максимальное кол-во жителей";
 
         /// <summary>
         /// Сообщение об ошибке, возникающей при выходе номера квартиры за допустимый диапазон.
@@ -148,9 +148,8 @@ namespace coursework_oop
     {
         /// <summary>
         /// Конструктор для создания экземпляра NotStringException с указанным сообщением.
-        /// </summary>
-        /// <param name="message">Сообщение об ошибке</param>
-        public NotStringException(string message) : base(message)
+        /// </summary
+        public NotStringException() : base(ErrorMessages.NotStringError)
         {
         }
     }
@@ -163,8 +162,7 @@ namespace coursework_oop
         /// <summary>
         /// Конструктор для создания экземпляра NotIntException с указанным сообщением.
         /// </summary>
-        /// <param name="message">Сообщение об ошибке</param>
-        public NotIntException(string message) : base(message)
+        public NotIntException() : base(ErrorMessages.notIntError)
         {
         }
     }
@@ -177,8 +175,7 @@ namespace coursework_oop
         /// <summary>
         /// Конструктор для создания экземпляра NotDecimalException с указанным сообщением.
         /// </summary>
-        /// <param name="message">Сообщение об ошибке</param>
-        public NotDecimalException(string message) : base(message)
+        public NotDecimalException() : base(ErrorMessages.notDecimalError)
         {
         }
     }
@@ -191,8 +188,7 @@ namespace coursework_oop
         /// <summary>
         /// Конструктор для создания экземпляра UserNotExistsException с указанным сообщением.
         /// </summary>
-        /// <param name="message">Сообщение об ошибке</param>
-        public UserNotExistsException(string message) : base(message)
+        public UserNotExistsException() : base(ErrorMessages.userNotExistsError)
         {
         }
     }
@@ -205,8 +201,7 @@ namespace coursework_oop
         /// <summary>
         /// Конструктор для создания экземпляра UserAlreadyExistsException с указанным сообщением.
         /// </summary>
-        /// <param name="message">Сообщение об ошибке</param>
-        public UserAlreadyExistsException(string message) : base(message)
+        public UserAlreadyExistsException() : base(ErrorMessages.userAlreadyExistsError)
         {
         }
     }
@@ -219,32 +214,34 @@ namespace coursework_oop
         /// <summary>
         /// Конструктор для создания экземпляра UserAlreadyExistsException с указанным сообщением.
         /// </summary>
-        /// <param name="message">Сообщение об ошибке</param>
-        public NotSupportException(string message) : base(message)
+        public NotSupportException() : base(ErrorMessages.notSupportError)
         {
         }
     }
 
+
     /// <summary>
-    /// Исключение, выбрасываемое, когда превышано максимальное кол-во жителей в одной квартире.
+    /// Исключение, выбрасываемое, когда превышено максимальное количество жителей в одной квартире.
     /// </summary>
-    public class MaxCntPersonException: Exception
+    public class MaxCntPersonException : Exception
     {
         /// <summary>
-        /// Конструктор для создания экземпляра UserAlreadyExistsException с указанным сообщением.
+        /// Конструктор, использующий стандартное сообщение об ошибке из ErrorMessages.
         /// </summary>
-        /// <param name="message">Сообщение об ошибке</param>
-        public MaxCntPersonException(string message) : base(message)
+        public MaxCntPersonException() : base(ErrorMessages.maxCntPersonError)
         {
         }
     }
 
     /// <summary>
-    /// Выбрасывается, если номер квартиры меньше 1 и больше 100000.
+    /// Выбрасывается, если номер квартиры меньше 1 или больше 10000.
     /// </summary>
     public class ApartmentNumberException : Exception
     {
-        public ApartmentNumberException(string message) : base(message)
+        /// <summary>
+        /// Конструктор, использующий стандартное сообщение об ошибке из ErrorMessages.
+        /// </summary>
+        public ApartmentNumberException() : base(ErrorMessages.apartmentNumberError)
         {
         }
     }
@@ -254,7 +251,10 @@ namespace coursework_oop
     /// </summary>
     public class RentAmountException : Exception
     {
-        public RentAmountException(string message) : base(message)
+        /// <summary>
+        /// Конструктор, использующий стандартное сообщение об ошибке из ErrorMessages.
+        /// </summary>
+        public RentAmountException() : base(ErrorMessages.rentAmountError)
         {
         }
     }
@@ -264,7 +264,10 @@ namespace coursework_oop
     /// </summary>
     public class ElectricityPaymentException : Exception
     {
-        public ElectricityPaymentException(string message) : base(message)
+        /// <summary>
+        /// Конструктор, использующий стандартное сообщение об ошибке из ErrorMessages.
+        /// </summary>
+        public ElectricityPaymentException() : base(ErrorMessages.electricityPaymentError)
         {
         }
     }
@@ -274,7 +277,10 @@ namespace coursework_oop
     /// </summary>
     public class UtilitiesPaymentException : Exception
     {
-        public UtilitiesPaymentException(string message) : base(message)
+        /// <summary>
+        /// Конструктор, использующий стандартное сообщение об ошибке из ErrorMessages.
+        /// </summary>
+        public UtilitiesPaymentException() : base(ErrorMessages.utilitiesPaymentError)
         {
         }
     }

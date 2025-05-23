@@ -63,6 +63,7 @@
             createButton.TabIndex = 2;
             createButton.Text = "Создать";
             createButton.UseVisualStyleBackColor = true;
+            createButton.Click += createButton_Click;
             // 
             // deleteButton
             // 

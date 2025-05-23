@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using System.IO;
+using System.Data;
 
 namespace coursework_oop
 {
@@ -27,38 +28,36 @@ namespace coursework_oop
 
     public class DataBaseWorker
     {
-        private SqliteConnection Connection {  get; set; }
+        private SqliteConnection Connection { get; set; }
 
         const string tableName = "tenants";
 
         public const string pathOfCopy = "./local.db";
 
-        public string Path;
-        
+        public string Path { get; private set; }
+
         public void openDataBase(string path, Statuses status)
         {
-            switch (status)
+            if (status == Statuses.NEW)
             {
-                case Statuses.NEW:
-                    createDataBase(path);
-                    break;
-                default:
-                    break;
+                createDataBase(path);
             }
-            File.Copy(path, pathOfCopy, true);
-            Connection = new SqliteConnection("DataSource=" + pathOfCopy);
+
+            File.Copy(path, pathOfCopy, overwrite: true);
+
+            Connection = new SqliteConnection($"Data Source={pathOfCopy}");
             Connection.Open();
             Path = path;
         }
 
-        public void createDataBase(string path)
+        private void createDataBase(string path)
         {
-            SqliteConnection localConnection = new SqliteConnection("DataSource=" + path);
-            localConnection.Open();
-            SqliteCommand createTableCommand = new SqliteCommand();
-            createTableCommand.Connection = Connection;
-            createTableCommand.CommandText = $@"
-                CREATE TABLE {tableName} 
+            using (var localConnection = new SqliteConnection($"Data Source={path}"))
+            {
+                localConnection.Open();
+
+                var createTableQuery = $@"
+                CREATE TABLE IF NOT EXISTS {tableName} 
                 (
                     {Fields.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
                     {Fields.LAST_NAME} TEXT NOT NULL,
@@ -68,92 +67,197 @@ namespace coursework_oop
                     {Fields.ELECTRICITY} REAL NOT NULL,
                     {Fields.UTILITIES} REAL NOT NULL
                 );";
-            createTableCommand.ExecuteNonQuery();
-            localConnection.Close();
+
+                using (var command = new SqliteCommand(createTableQuery, localConnection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         public void closeDataBase()
         {
-            Connection.Close();
+            Connection?.Close();
             Connection = null;
             Path = null;
+
+            File.Delete(pathOfCopy);
         }
 
         public void deleteDataBase()
         {
-            string temp = Path;
             closeDataBase();
-            File.Delete(temp);
+            File.Delete(Path);
         }
 
-        public void addRecord(Tenant person) 
+        public long generateUniqueID()
         {
-            SqliteCommand addCommand = new SqliteCommand();
-            addCommand.Connection = Connection;
-            addCommand.CommandText = $@"
+            string query = $"SELECT MAX({Fields.ID}) FROM {tableName};";
+
+            using (var command = new SqliteCommand(query, Connection))
+            {
+                object result = command.ExecuteScalar();
+
+                if (result == DBNull.Value || result == null)
+                {
+                    return 1;
+                }
+
+                long maxId = Convert.ToInt32(result);
+                return maxId + 1;
+            }
+        }
+
+        public void addRecord(Tenant person)
+        {
+            string query = $@"
             INSERT INTO {tableName} 
             (
                 {Fields.ID},
-                {Fields.LAST_NAME},
-                {Fields.FIRST_NAME},
-                {Fields.APPARTAMENT_NUMB},
-                {Fields.RENT},
-                {Fields.ELECTRICITY},
+                {Fields.LAST_NAME}, 
+                {Fields.FIRST_NAME}, 
+                {Fields.APPARTAMENT_NUMB}, 
+                {Fields.RENT}, 
+                {Fields.ELECTRICITY}, 
                 {Fields.UTILITIES}
             )
-            VALUES
+            VALUES 
             (
-                {person.Id},
-                '{person.LastName}',
-                '{person.FirstName}',
-                {person.AppartamentNumb},
-                {person.Rent},
-                {person.Electricity},
-                {person.Utilities}
+                @id,
+                @lastName, 
+                @firstName, 
+                @appartamentNumb, 
+                @rent, 
+                @electricity, 
+                @utilities
             );";
-            addCommand.ExecuteNonQuery();
+
+            using (var command = new SqliteCommand(query, Connection))
+            {
+                command.Parameters.AddWithValue("@id", person.Id);
+                command.Parameters.AddWithValue("@lastName", person.LastName);
+                command.Parameters.AddWithValue("@firstName", person.FirstName);
+                command.Parameters.AddWithValue("@appartamentNumb", person.AppartamentNumb);
+                command.Parameters.AddWithValue("@rent", person.Rent);
+                command.Parameters.AddWithValue("@electricity", person.Electricity);
+                command.Parameters.AddWithValue("@utilities", person.Utilities);
+
+                command.ExecuteNonQuery();
+            }
         }
 
         public void deleteRecord(int id)
         {
-            SqliteCommand deleteCommand = new SqliteCommand();
-            deleteCommand.Connection = Connection;
-            deleteCommand.CommandText = $@"
-            DELETE FROM {tableName}
-                WHERE {Fields.ID} = {id};";
-            deleteCommand.ExecuteNonQuery();
+            string query = $@"
+            DELETE FROM {tableName} 
+            WHERE {Fields.ID} = @id;";
+
+            using (var command = new SqliteCommand(query, Connection))
+            {
+                command.Parameters.AddWithValue("@id", id);
+                command.ExecuteNonQuery();
+            }
         }
 
         public void updateRecord(Tenant person)
         {
-            SqliteCommand updateCommand = new SqliteCommand();
-            updateCommand.Connection = Connection;
-            updateCommand.CommandText = $@"
-            UPDATE tenants SET
-                {Fields.LAST_NAME} = {person.LastName},
-                {Fields.FIRST_NAME} = '{person.FirstName}',
-                {Fields.APPARTAMENT_NUMB} = '{person.AppartamentNumb}',
-                {Fields.RENT} = {person.Rent},
-                {Fields.ELECTRICITY} = {person.Electricity},
-                {Fields.UTILITIES} = {person.Utilities}
-                WHERE {Fields.ID} = {person.Id};";
-            updateCommand.ExecuteNonQuery();
+            string query = $@"
+            UPDATE {tableName} SET
+                {Fields.LAST_NAME} = @lastName,
+                {Fields.FIRST_NAME} = @firstName,
+                {Fields.APPARTAMENT_NUMB} = @appartamentNumb,
+                {Fields.RENT} = @rent,
+                {Fields.ELECTRICITY} = @electricity,
+                {Fields.UTILITIES} = @utilities
+            WHERE {Fields.ID} = @id;";
+
+            using (var command = new SqliteCommand(query, Connection))
+            {
+                command.Parameters.AddWithValue("@id", person.Id);
+                command.Parameters.AddWithValue("@lastName", person.LastName);
+                command.Parameters.AddWithValue("@firstName", person.FirstName);
+                command.Parameters.AddWithValue("@appartamentNumb", person.AppartamentNumb);
+                command.Parameters.AddWithValue("@rent", person.Rent);
+                command.Parameters.AddWithValue("@electricity", person.Electricity);
+                command.Parameters.AddWithValue("@utilities", person.Utilities);
+
+                command.ExecuteNonQuery();
+            }
         }
 
         public Tenant selectRecord(int id)
         {
-            SqliteCommand selectCommand = new SqliteCommand();
-            selectCommand.Connection = Connection;
-            selectCommand.CommandText = $@"
-                SELECT {Fields.ID}, {Fields.LAST_NAME}, {Fields.FIRST_NAME}, {Fields.APPARTAMENT_NUMB}, {Fields.RENT}, {Fields.ELECTRICITY}, {Fields.UTILITIES}
-                FROM tenants
-                    WHERE {Fields.ID} = {id};
-            ";
-            SqliteDataReader reader = selectCommand.ExecuteReader();
-            reader.Read();
-            return new Tenant((long)reader[Fields.ID], (string)reader[Fields.LAST_NAME], (string)reader[Fields.FIRST_NAME], (long)reader[Fields.APPARTAMENT_NUMB],
-            (double)reader[Fields.RENT], (double)reader[Fields.ELECTRICITY], (double)reader[Fields.UTILITIES]);
+            string query = $@"
+            SELECT 
+                {Fields.ID}, 
+                {Fields.LAST_NAME}, 
+                {Fields.FIRST_NAME}, 
+                {Fields.APPARTAMENT_NUMB}, 
+                {Fields.RENT}, 
+                {Fields.ELECTRICITY}, 
+                {Fields.UTILITIES}
+            FROM {tableName}
+            WHERE {Fields.ID} = @id;";
+
+            using (var command = new SqliteCommand(query, Connection))
+            {
+                command.Parameters.AddWithValue("@id", id);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new Tenant(
+                            id: reader.GetInt64(reader.GetOrdinal(Fields.ID)),
+                            lastName: reader.GetString(reader.GetOrdinal(Fields.LAST_NAME)),
+                            firstName: reader.GetString(reader.GetOrdinal(Fields.FIRST_NAME)),
+                            appartamentNumb: reader.GetInt64(reader.GetOrdinal(Fields.APPARTAMENT_NUMB)),
+                            rent: reader.GetDouble(reader.GetOrdinal(Fields.RENT)),
+                            electricity: reader.GetDouble(reader.GetOrdinal(Fields.ELECTRICITY)),
+                            utilities: reader.GetDouble(reader.GetOrdinal(Fields.UTILITIES))
+                        );
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
         }
 
+        public List<Tenant> GetAllTenants()
+        {
+            var tenants = new List<Tenant>();
+
+            string query = $@"
+            SELECT 
+                {Fields.ID}, 
+                {Fields.LAST_NAME}, 
+                {Fields.FIRST_NAME}, 
+                {Fields.APPARTAMENT_NUMB}, 
+                {Fields.RENT}, 
+                {Fields.ELECTRICITY}, 
+                {Fields.UTILITIES}
+            FROM {tableName};";
+
+            using (var command = new SqliteCommand(query, Connection))
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    tenants.Add(new Tenant(
+                        id: reader.GetInt64(reader.GetOrdinal(Fields.ID)),
+                        lastName: reader.GetString(reader.GetOrdinal(Fields.LAST_NAME)),
+                        firstName: reader.GetString(reader.GetOrdinal(Fields.FIRST_NAME)),
+                        appartamentNumb: reader.GetInt64(reader.GetOrdinal(Fields.APPARTAMENT_NUMB)),
+                        rent: reader.GetDouble(reader.GetOrdinal(Fields.RENT)),
+                        electricity: reader.GetDouble(reader.GetOrdinal(Fields.ELECTRICITY)),
+                        utilities: reader.GetDouble(reader.GetOrdinal(Fields.UTILITIES))
+                    ));
+                }
+            }
+
+            return tenants;
+        }
     }
 }
