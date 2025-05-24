@@ -14,7 +14,7 @@ namespace coursework_oop
         /// <summary>
         /// Регулярное выражение для строк
         /// </summary>
-        public const String strings = @"^([A-Z][a-z][А-Я][а-я])*$";
+        public const String strings = @"^[A-Za-zА-Яа-яЁё]+$";
 
         /// <summary>
         /// Регулярное выражение для расширения файла
@@ -30,6 +30,11 @@ namespace coursework_oop
         /// Регулярное выражение для вещественных чисел
         /// </summary>
         public const String decimals = @"^(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$";
+
+        /// <summary>
+        /// Минимальная длина строчки
+        /// </summary>
+        public const int  minLengthStr = 5;
 
         /// <summary>
         /// Максимальное кол-во проживающих в одной квартире
@@ -87,6 +92,11 @@ namespace coursework_oop
         /// </summary>
         public const string NotStringError = "Значение должно быть строкой. Строка должна содержать буквы латиницы или" +
             " кириллицы в верхнем или нижнем регистре.";
+
+        /// <summary>
+        /// Сообщение об ошибке, если длина строчки меньше минимальной длины.
+        /// </summary>
+        public const string minLenghtStrError = "Длина строчки должна составлять не менее 5 символов";
 
         /// <summary>
         /// Сообщение об ошибке, если значение не является целым числом.

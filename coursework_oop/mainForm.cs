@@ -4,11 +4,11 @@ namespace coursework_oop
 {
     public partial class Form1 : Form
     {
-        private DataBaseWorker dataBaseWorker;
-        public Form1(DataBaseWorker dataBaseWorker)
+        private Controller _controller;
+        public Form1(Controller dataBaseWorker)
         {
             InitializeComponent();
-            this.dataBaseWorker = dataBaseWorker;
+            _controller = dataBaseWorker;
             mainTable.ColumnCount = 7;
             mainTable.Columns[0].Name = "ID";
             mainTable.Columns[1].Name = "Фамилия";
@@ -37,30 +37,26 @@ namespace coursework_oop
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "Текстовые файлы (*.db)";
+                openFileDialog.Filter = "*.db|";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    dataBaseWorker.openDataBase(openFileDialog.FileName, Statuses.EXISTING);
-                    mainTable.DataSource = DataBaseWorker.pathOfCopy;
+                    _controller.openDataBase(openFileDialog.FileName, Statuses.EXISTING);
                 }
+                List<Tenant> tenantList = _controller.GetAllTenants();
+                FillMainTable(tenantList);
             }
         }
 
         private void createButton_Click(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
-            {
-                folderDialog.SelectedPath = @"C:\";
+            newDbForm subForm = new newDbForm(_controller);
+            subForm.ShowDialog();
+            List<Tenant> tenantList = _controller.GetAllTenants();
+            FillMainTable(tenantList);
 
-                if (folderDialog.ShowDialog() == DialogResult.OK)
-                {
-                    string selectedPath = folderDialog.SelectedPath;
-                    dataBaseWorker.openDataBase(selectedPath, Statuses.NEW);
-                }
-            }
         }
 
         private void safeButton_Click(object sender, EventArgs e)
@@ -72,5 +68,24 @@ namespace coursework_oop
         {
 
         }
+
+        private void FillMainTable(List<Tenant> tenants)
+        {
+            mainTable.Rows.Clear();
+
+            foreach (var tenant in tenants)
+            {
+                mainTable.Rows.Add(
+                    tenant.Id,
+                    tenant.LastName,
+                    tenant.FirstName,
+                    tenant.AppartamentNumb,
+                    tenant.Rent,
+                    tenant.Electricity,
+                    tenant.Utilities
+                );
+            }
+        }
+
     }
 }

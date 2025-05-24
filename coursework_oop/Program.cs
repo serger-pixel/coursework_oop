@@ -9,7 +9,7 @@ namespace coursework_oop
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            DataBaseWorker dataBaseworker = new DataBaseWorker();
+            Controller dataBaseworker = new Controller();
             Application.Run(new Form1(dataBaseworker));
         }
     }
