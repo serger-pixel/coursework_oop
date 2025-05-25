@@ -17,21 +17,6 @@ namespace coursework_oop
         public const String strings = @"^[A-Za-zА-Яа-яЁё]+$";
 
         /// <summary>
-        /// Регулярное выражение для расширения файла
-        /// </summary>
-        public const String files = @"(.db)$";
-
-        /// <summary>
-        /// Регулярное выражение для целых чисел
-        /// </summary>
-        public const String ints = @"^(?:214748364[0-7]|21474836[0-3][0-9]|214748[0-3][0-9]{2}|2147[0-3][0-9]{3}|21[0-3][0-9]{4}|2[0-0][0-9]{5}|[1-9][0-9]{0,8}|0)$";
-
-        /// <summary>
-        /// Регулярное выражение для вещественных чисел
-        /// </summary>
-        public const String decimals = @"^(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$";
-
-        /// <summary>
         /// Минимальная длина строчки
         /// </summary>
         public const int  minLengthStr = 5;
@@ -74,12 +59,22 @@ namespace coursework_oop
         /// <summary>
         /// Минимальная оплата коммнальных услуг
         /// </summary>
-        public const int ьштUtilities = 100;
+        public const int minUtilities = 100;
 
         /// <summary>
         /// Максимальная оплата коммнальных услуг
         /// </summary>
         public const int maxUtilities = 1000;
+
+        /// <summary>
+        /// Минимальная оплата коммнальных услуг
+        /// </summary>
+        public const long minId = 1;
+
+        /// <summary>
+        /// Максимальная оплата коммнальных услуг
+        /// </summary>
+        public const long maxId = 1000000;
     }
 
     /// <summary>
@@ -90,44 +85,34 @@ namespace coursework_oop
         /// <summary>
         /// Сообщение об ошибке, если значение не является строкой.
         /// </summary>
-        public const string NotStringError = "Значение должно быть строкой. Строка должна содержать буквы латиницы или" +
+        public const string notStringError = "Значение должно быть строкой. Строка должна содержать буквы латиницы или" +
             " кириллицы в верхнем или нижнем регистре.";
+
+        /// <summary>
+        /// Сообщение об ошибке, если файл с таким именем уже существует.
+        /// </summary>
+        public const string nameDbError = "База данных с таким именем уже существует";
 
         /// <summary>
         /// Сообщение об ошибке, если длина строчки меньше минимальной длины.
         /// </summary>
         public const string minLenghtStrError = "Длина строчки должна составлять не менее 5 символов";
 
-        /// <summary>
-        /// Сообщение об ошибке, если значение не является целым числом.
-        /// </summary>
-        public const string notIntError = "Значение должно быть целым числом.";
-
-        /// <summary>
-        /// Сообщение об ошибке, если значение не является десятичным числом.
-        /// </summary>
-        public const string notDecimalError = "Значение должно быть десятичным числом.";
 
         /// <summary>
         /// Сообщение об ошибке, когда пользователя не существует.
         /// </summary>
         public const string userNotExistsError = "Такого пользователя не сущестует.";
 
-
         /// <summary>
         /// Сообщение об ошибке, когда пользователь уже существует.
         /// </summary>
-        public const string userAlreadyExistsError = "Такой пользователь уже существует.";
-
-        /// <summary>
-        /// Сообщение об ошибке, когда файл не поддерживается.
-        /// </summary>
-        public const string notSupportError = "Данный файл не поддерживатся.";
+        public const string userAlreadyExistsError = "Пользователь с таким ID уже существует.";
 
         /// <summary>
         /// Сообщение об ошибке, когда превышано максимальное кол-во проживающих в одной квартире.
         /// </summary>
-        public const string maxCntPersonError = "Превышано максимальное кол-во жителей";
+        public const string maxCntPersonError = "Превышано максимальное кол-во жителей в одной квартире";
 
         /// <summary>
         /// Сообщение об ошибке, возникающей при выходе номера квартиры за допустимый диапазон.
@@ -159,33 +144,7 @@ namespace coursework_oop
         /// <summary>
         /// Конструктор для создания экземпляра NotStringException с указанным сообщением.
         /// </summary
-        public NotStringException() : base(ErrorMessages.NotStringError)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Исключение, выбрасываемое, когда ожидается целое число (int), но полученное значение не является целым числом.
-    /// </summary>
-    public class NotIntException : Exception
-    {
-        /// <summary>
-        /// Конструктор для создания экземпляра NotIntException с указанным сообщением.
-        /// </summary>
-        public NotIntException() : base(ErrorMessages.notIntError)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Исключение, выбрасываемое, когда ожидается десятичное число (decimal), но полученное значение не является десятичным числом.
-    /// </summary>
-    public class NotDecimalException : Exception
-    {
-        /// <summary>
-        /// Конструктор для создания экземпляра NotDecimalException с указанным сообщением.
-        /// </summary>
-        public NotDecimalException() : base(ErrorMessages.notDecimalError)
+        public NotStringException() : base(ErrorMessages.notStringError + "\n" + ErrorMessages.minLenghtStrError)
         {
         }
     }
@@ -217,14 +176,14 @@ namespace coursework_oop
     }
 
     /// <summary>
-    /// Исключение, выбрасываемое, когда файл не поддерживает расширение db.
+    /// Исключение, выбрасываемое, когда файл уже существует.
     /// </summary>
-    public class NotSupportException : Exception
+    public class FileAllReadyExits : Exception
     {
         /// <summary>
-        /// Конструктор для создания экземпляра UserAlreadyExistsException с указанным сообщением.
+        /// Конструктор для создания экземпляра FileAllReadyExits с указанным сообщением.
         /// </summary>
-        public NotSupportException() : base(ErrorMessages.notSupportError)
+        public FileAllReadyExits() : base(ErrorMessages.nameDbError)
         {
         }
     }

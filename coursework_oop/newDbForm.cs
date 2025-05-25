@@ -13,9 +13,11 @@ namespace coursework_oop
     public partial class newDbForm : Form
     {
         private Controller _controller;
-        public newDbForm(Controller dataBaseWorker)
+        private MainForm _mainForm;
+        public newDbForm(Controller dataBaseWorker, MainForm  mainForm)
         {
             _controller = dataBaseWorker;
+            _mainForm = mainForm;
             InitializeComponent();
         }
 
@@ -25,7 +27,9 @@ namespace coursework_oop
             {
                 _controller.openDataBase(pathTextBox.Text + "\\" + nameTextBox.Text + ".db"
                 , Statuses.NEW);
-                _controller.closeDataBase();
+                List<Tenant> tenantList = _controller.GetAllTenants();
+                _mainForm.FillMainTable(tenantList);
+                _mainForm.deleteDbButton.Enabled = true;
                 Close();
             }
             catch(Exception ex)

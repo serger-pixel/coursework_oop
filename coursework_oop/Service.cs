@@ -37,7 +37,6 @@ namespace coursework_oop
 
         public void openDataBase(string path, Statuses status)
         {
-            closeDataBase();
             if (status == Statuses.NEW)
             {
                 createDataBase(path);
@@ -78,30 +77,9 @@ namespace coursework_oop
 
         public void deleteDataBase()
         {
-            closeDataBase();
             File.Delete(Path);
+            Path = null;
         }
-
-        public long generateUniqueID()
-        {
-            string query = $"SELECT MAX({Fields.ID}) FROM {tableName};";
-            using (var localConnection = new SqliteConnection($"Data Source={pathOfCopy}"))
-            {
-                using (var command = new SqliteCommand(query, localConnection))
-                {
-                    object result = command.ExecuteScalar();
-
-                    if (result == DBNull.Value || result == null)
-                    {
-                        return 1;
-                    }
-
-                    long maxId = Convert.ToInt32(result);
-                    return maxId + 1;
-                }
-            }
-        }
-
         public void addRecord(Tenant person)
         {
             string query = $@"
@@ -127,6 +105,7 @@ namespace coursework_oop
             );";
             using (var localConnection = new SqliteConnection($"Data Source={pathOfCopy}"))
             {
+                localConnection.Open();
                 using (var command = new SqliteCommand(query, localConnection))
                 {
                     command.Parameters.AddWithValue("@id", person.Id);
@@ -233,43 +212,45 @@ namespace coursework_oop
             }
         }
 
-        public List<Tenant> GetAllTenants()
-        {
-            var tenants = new List<Tenant>();
-
-            string query = $@"
-        SELECT 
-            {Fields.ID}, 
-            {Fields.LAST_NAME}, 
-            {Fields.FIRST_NAME}, 
-            {Fields.APPARTAMENT_NUMB}, 
-            {Fields.RENT}, 
-            {Fields.ELECTRICITY}, 
-            {Fields.UTILITIES}
-        FROM {tableName};";
-
-            using (var localConnection = new SqliteConnection($"Data Source={pathOfCopy}"))
+            public List<Tenant> GetAllTenants()
             {
-                localConnection.Open();
-                using (var command = new SqliteCommand(query, localConnection))
-                using (var reader = command.ExecuteReader())
+                var tenants = new List<Tenant>();
+
+                string query = $@"
+            SELECT 
+                {Fields.ID}, 
+                {Fields.LAST_NAME}, 
+                {Fields.FIRST_NAME}, 
+                {Fields.APPARTAMENT_NUMB}, 
+                {Fields.RENT}, 
+                {Fields.ELECTRICITY}, 
+                {Fields.UTILITIES}
+            FROM {tableName};";
+
+                using (var localConnection = new SqliteConnection($"Data Source={pathOfCopy}"))
                 {
-                    while (reader.Read())
+                    localConnection.Open();
+                    using (var command = new SqliteCommand(query, localConnection))
                     {
-                        tenants.Add(new Tenant(
-                            id: reader.GetInt64(reader.GetOrdinal(Fields.ID)),
-                            lastName: reader.GetString(reader.GetOrdinal(Fields.LAST_NAME)),
-                            firstName: reader.GetString(reader.GetOrdinal(Fields.FIRST_NAME)),
-                            appartamentNumb: reader.GetInt64(reader.GetOrdinal(Fields.APPARTAMENT_NUMB)),
-                            rent: reader.GetDouble(reader.GetOrdinal(Fields.RENT)),
-                            electricity: reader.GetDouble(reader.GetOrdinal(Fields.ELECTRICITY)),
-                            utilities: reader.GetDouble(reader.GetOrdinal(Fields.UTILITIES))
-                        ));
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                tenants.Add(new Tenant(
+                                    id: reader.GetInt64(reader.GetOrdinal(Fields.ID)),
+                                    lastName: reader.GetString(reader.GetOrdinal(Fields.LAST_NAME)),
+                                    firstName: reader.GetString(reader.GetOrdinal(Fields.FIRST_NAME)),
+                                    appartamentNumb: reader.GetInt64(reader.GetOrdinal(Fields.APPARTAMENT_NUMB)),
+                                    rent: reader.GetDouble(reader.GetOrdinal(Fields.RENT)),
+                                    electricity: reader.GetDouble(reader.GetOrdinal(Fields.ELECTRICITY)),
+                                    utilities: reader.GetDouble(reader.GetOrdinal(Fields.UTILITIES))
+                                ));
+                            }
+                        }
                     }
                 }
-            }
 
-            return tenants;
-        }
+                return tenants;
+            }
     }
 }

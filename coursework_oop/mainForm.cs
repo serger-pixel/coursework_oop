@@ -2,10 +2,10 @@ using System.Windows.Forms;
 
 namespace coursework_oop
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private Controller _controller;
-        public Form1(Controller dataBaseWorker)
+        public MainForm(Controller dataBaseWorker)
         {
             InitializeComponent();
             _controller = dataBaseWorker;
@@ -44,19 +44,17 @@ namespace coursework_oop
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     _controller.openDataBase(openFileDialog.FileName, Statuses.EXISTING);
+                    List<Tenant> tenantList = _controller.GetAllTenants();
+                    FillMainTable(tenantList);
+                    deleteDbButton.Enabled = true;
                 }
-                List<Tenant> tenantList = _controller.GetAllTenants();
-                FillMainTable(tenantList);
             }
         }
 
         private void createButton_Click(object sender, EventArgs e)
         {
-            newDbForm subForm = new newDbForm(_controller);
+            newDbForm subForm = new newDbForm(_controller, this);
             subForm.ShowDialog();
-            List<Tenant> tenantList = _controller.GetAllTenants();
-            FillMainTable(tenantList);
-
         }
 
         private void safeButton_Click(object sender, EventArgs e)
@@ -66,10 +64,11 @@ namespace coursework_oop
 
         private void addButton_Click(object sender, EventArgs e)
         {
-
+            AddRecordForm subForm = new AddRecordForm(_controller, this);
+            subForm.ShowDialog();
         }
 
-        private void FillMainTable(List<Tenant> tenants)
+        public void FillMainTable(List<Tenant> tenants)
         {
             mainTable.Rows.Clear();
 
@@ -86,6 +85,14 @@ namespace coursework_oop
                 );
             }
         }
+
+        private void deleteDbButton_Click(object sender, EventArgs e)
+        {
+            mainTable.Rows.Clear();
+            _controller.deleteDataBase();
+            deleteDbButton.Enabled = false;
+        }
+
 
     }
 }

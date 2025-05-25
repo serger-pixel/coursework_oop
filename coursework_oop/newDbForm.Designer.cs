@@ -18,6 +18,7 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
+            _controller.closeDataBase();
         }
 
         #region Windows Form Designer generated code
@@ -89,6 +90,7 @@
             Controls.Add(nameTextBox);
             Controls.Add(nameDbLabel);
             Name = "newDbForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "newDbForm";
             ResumeLayout(false);
             PerformLayout();

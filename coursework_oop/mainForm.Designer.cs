@@ -1,6 +1,6 @@
 ﻿namespace coursework_oop
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -144,21 +144,24 @@
             // 
             // deleteDbButton
             // 
+            deleteDbButton.Enabled = false;
             deleteDbButton.Location = new Point(29, 82);
             deleteDbButton.Name = "deleteDbButton";
             deleteDbButton.Size = new Size(214, 34);
             deleteDbButton.TabIndex = 3;
             deleteDbButton.Text = "Удалить базу данных";
             deleteDbButton.UseVisualStyleBackColor = true;
+            deleteDbButton.Click += deleteDbButton_Click;
             // 
-            // Form1
+            // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1324, 912);
             Controls.Add(panelButtons);
             Controls.Add(mainTable);
-            Name = "Form1";
+            Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)mainTable).EndInit();
             panelButtons.ResumeLayout(false);
@@ -175,7 +178,7 @@
         private Button saveButton;
         private Panel panelButtons;
         private Button addButton;
-        private Button deleteDbButton;
+        public Button deleteDbButton;
         private Button filterButton;
         private TextBox textBox1;
         private Label searchLabel;
