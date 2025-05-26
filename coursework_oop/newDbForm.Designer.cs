@@ -91,7 +91,7 @@
             Controls.Add(nameDbLabel);
             Name = "newDbForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "newDbForm";
+            Text = "Открытие";
             ResumeLayout(false);
             PerformLayout();
         }

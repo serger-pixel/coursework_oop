@@ -28,19 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             mainTable = new DataGridView();
             openDbButton = new Button();
             createDbButton = new Button();
             deleteButton = new Button();
             saveButton = new Button();
             panelButtons = new Panel();
+            cntFindLabel = new Label();
             searchComboBox = new ComboBox();
             filterButton = new Button();
             searchBox = new TextBox();
             searchLabel = new Label();
             addButton = new Button();
             deleteDbButton = new Button();
-            cntFindLabel = new Label();
             ((System.ComponentModel.ISupportInitialize)mainTable).BeginInit();
             panelButtons.SuspendLayout();
             SuspendLayout();
@@ -111,9 +112,20 @@
             panelButtons.Name = "panelButtons";
             panelButtons.Size = new Size(1467, 216);
             panelButtons.TabIndex = 5;
+            panelButtons.Paint += panelButtons_Paint;
+            // 
+            // cntFindLabel
+            // 
+            cntFindLabel.AutoSize = true;
+            cntFindLabel.Location = new Point(691, 91);
+            cntFindLabel.Name = "cntFindLabel";
+            cntFindLabel.Size = new Size(22, 25);
+            cntFindLabel.TabIndex = 9;
+            cntFindLabel.Text = "0";
             // 
             // searchComboBox
             // 
+            searchComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             searchComboBox.Items.AddRange(new object[] { "ID", "Имя", "Фамилия", "Номер квартиры", "Аренда", "Электричество", "Коммунальные услуги" });
             searchComboBox.Location = new Point(1213, 12);
             searchComboBox.Name = "searchComboBox";
@@ -129,6 +141,7 @@
             filterButton.TabIndex = 7;
             filterButton.Text = "Фильтрация";
             filterButton.UseVisualStyleBackColor = true;
+            filterButton.Click += filterButton_Click;
             // 
             // searchBox
             // 
@@ -167,14 +180,6 @@
             deleteDbButton.UseVisualStyleBackColor = true;
             deleteDbButton.Click += deleteDbButton_Click;
             // 
-            // cntFindLabel
-            // 
-            cntFindLabel.AutoSize = true;
-            cntFindLabel.Location = new Point(31, 178);
-            cntFindLabel.Name = "cntFindLabel";
-            cntFindLabel.Size = new Size(0, 25);
-            cntFindLabel.TabIndex = 9;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -182,9 +187,10 @@
             ClientSize = new Size(1491, 912);
             Controls.Add(panelButtons);
             Controls.Add(mainTable);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Form1";
+            Text = "Информационная система \"Дом\"";
             ((System.ComponentModel.ISupportInitialize)mainTable).EndInit();
             panelButtons.ResumeLayout(false);
             panelButtons.PerformLayout();
@@ -205,6 +211,6 @@
         private TextBox searchBox;
         private Label searchLabel;
         private ComboBox searchComboBox;
-        private Label cntFindLabel;
+        public Label cntFindLabel;
     }
 }

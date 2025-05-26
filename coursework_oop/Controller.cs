@@ -147,6 +147,38 @@ namespace coursework_oop
                 double.Parse(rent), double.Parse(electricity), double.Parse(utilities)));
         }
 
+        public List<Tenant> filter(string crit, string critValue)
+        {
+            List<Tenant> allTenants = _service.GetAllTenants();
+            switch (crit)
+            {
+                case "Имя":
+                case "Фамилия":
+                    if (!Regex.IsMatch(critValue, RegsAndConsts.strings))
+                    {
+                        throw new NotStringException();
+                    }
+                    break;
+                case "Номер квартиры":
+                    if (!Regex.IsMatch(critValue, RegsAndConsts.ints))
+                    {
+                        throw new NotIntException();
+                    }
+                    break;
+                case "Аренда":
+                case "Электричество":
+                case "Коммунальные услуги":
+                    if (!Regex.IsMatch(critValue, RegsAndConsts.doubles))
+                    {
+                        throw new NotDoubleException();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return _service.getDefiniteTenants(crit, critValue);
+        }
+
         public void safeDb()
         {
             _service.safeDb();

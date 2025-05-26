@@ -6,7 +6,11 @@ namespace coursework_oop
     {
         private Controller _controller;
         private string _currentValue;
-        private int cntRecords = 0;
+        public int cntAllRecords = 0;
+        public int cntFindRecords = 0;
+
+        public string crit;
+        public string critValue;
 
 
         public MainForm(Controller dataBaseWorker)
@@ -28,9 +32,10 @@ namespace coursework_oop
             mainTable.Dock = DockStyle.Fill;
             mainTable.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-            searchComboBox.SelectedIndex = 0;
-
             searchBox.TextChanged += find;
+
+            cntFindLabel.Text = "Всего записей: 0";
+            cntFindLabel.Size = new Size(100, 25);
 
             panelButtons.Height = 120;
             panelButtons.Dock = DockStyle.Top;
@@ -43,6 +48,8 @@ namespace coursework_oop
             splitContainer.SplitterDistance = 1;
 
             Controls.Add(splitContainer);
+
+
         }
 
         private void openButton_Click(object sender, EventArgs e)
@@ -59,7 +66,8 @@ namespace coursework_oop
                     List<Tenant> tenantList = _controller.GetAllTenants();
                     FillMainTable(tenantList);
                     deleteDbButton.Enabled = true;
-                    
+                    cntAllRecords = tenantList.Count;
+                    cntFindLabel.Text = $"Всего записей: {cntAllRecords}";
                 }
             }
         }
@@ -102,14 +110,16 @@ namespace coursework_oop
 
         private void find(object sender, EventArgs e)
         {
-            string crit = searchComboBox.Text;
-            string findText = searchBox.Text;
+            cntAllRecords = _controller.GetAllTenants().Count;
+            crit = searchComboBox.Text;
+            critValue = searchBox.Text;
             for (int i = 0; i < mainTable.Rows.Count; i++)
             {
                 mainTable.Rows[i].DefaultCellStyle.BackColor = Color.White;
             }
-            if (findText.Length == 0)
+            if (critValue.Length == 0)
             {
+                cntFindLabel.Text = $"Всего записей: {cntAllRecords}";
                 return;
             }
             int ind = -1;
@@ -119,10 +129,10 @@ namespace coursework_oop
                     ind = 0;
                     break;
                 case "Имя":
-                    ind = 1;
+                    ind = 2;
                     break;
                 case "Фамилия":
-                    ind = 2;
+                    ind = 1;
                     break;
                 case "Номер квартиры":
                     ind = 3;
@@ -139,14 +149,17 @@ namespace coursework_oop
                 default:
                     break;
             }
+            cntFindRecords = 0;
             for (int i = 0; i < mainTable.Rows.Count; i++)
             {
-                string currentStr = mainTable.Rows[i].Cells[ind].Value.ToString();
-                if (currentStr.Contains(findText))
+                string currentStr = mainTable.Rows[i].Cells[ind].Value.ToString().ToLower();
+                if (currentStr.Contains(critValue.ToLower()))
                 {
                     mainTable.Rows[i].DefaultCellStyle.BackColor = Color.LightCoral;
+                    cntFindRecords++;
                 }
             }
+            cntFindLabel.Text = $"Найдено: {cntFindRecords} из {cntAllRecords}";
         }
 
         private void safeButton_Click(object sender, EventArgs e)
@@ -158,6 +171,7 @@ namespace coursework_oop
         {
             AddRecordForm subForm = new AddRecordForm(_controller, this);
             subForm.ShowDialog();
+            find(null, null);
         }
 
         public void FillMainTable(List<Tenant> tenants)
@@ -183,6 +197,7 @@ namespace coursework_oop
             mainTable.Rows.Clear();
             _controller.deleteDataBase();
             deleteDbButton.Enabled = false;
+            find(null, null);
         }
 
         private void deleteButton_Click(object sender, EventArgs e)
@@ -193,13 +208,25 @@ namespace coursework_oop
                 _controller.deleteRecord(Convert.ToInt64(mainTable.Rows[current].Cells[0].Value));
                 List<Tenant> tenantList = _controller.GetAllTenants();
                 FillMainTable(tenantList);
-                deleteDbButton.Enabled = true;
+                find(null, null);
             }
+
         }
 
         private void searchComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             find(null, null);
+        }
+
+        private void filterButton_Click(object sender, EventArgs e)
+        {
+            FilterForm subForm = new FilterForm(_controller, this);
+            subForm.ShowDialog();
+        }
+
+        private void panelButtons_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

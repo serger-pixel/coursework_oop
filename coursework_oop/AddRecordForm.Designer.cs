@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddRecordForm));
             firstNameLabel = new Label();
             lastNameLabel = new Label();
             apartNumbLabel = new Label();
@@ -207,8 +208,9 @@
             Controls.Add(apartNumbLabel);
             Controls.Add(lastNameLabel);
             Controls.Add(firstNameLabel);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "AddRecordForm";
-            Text = "Form1";
+            Text = "Добавление";
             ((System.ComponentModel.ISupportInitialize)utilitiesValue).EndInit();
             ((System.ComponentModel.ISupportInitialize)electricityValue).EndInit();
             ((System.ComponentModel.ISupportInitialize)rentValue).EndInit();

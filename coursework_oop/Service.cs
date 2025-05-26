@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using System.IO;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace coursework_oop
 {
@@ -256,6 +257,73 @@ namespace coursework_oop
             }
 
             return tenants;
+        }
+
+        public List<Tenant> getDefiniteTenants(string crit, string critValue)
+        {
+            List<Tenant> allTenants = GetAllTenants();
+            List<Tenant> defeniteTenats = new List<Tenant>();
+            critValue = critValue.ToLower();
+            switch (crit)
+            {
+                case "Имя":
+                    foreach (var tenant in allTenants)
+                    {
+                        if (tenant.FirstName.ToString().ToLower().Contains(critValue))
+                        {
+                            defeniteTenats.Add(tenant);
+                        }
+                    }
+                    break;
+                case "Фамилия":
+                    foreach (var tenant in allTenants)
+                    {
+                        if (tenant.LastName.ToString().ToLower().Contains(critValue))
+                        {
+                            defeniteTenats.Add(tenant);
+                        }
+                    }
+                    break;
+                case "Номер квартиры":
+                    foreach (var tenant in allTenants)
+                    {
+                        if (tenant.AppartamentNumb.ToString().ToLower().Contains(critValue))
+                        {
+                            defeniteTenats.Add(tenant);
+                        }
+                    }
+                    break;
+                case "Аренда":
+                    foreach (var tenant in allTenants)
+                    {
+                        if (tenant.Rent.ToString().ToString().ToLower().Contains(critValue))
+                        {
+                            defeniteTenats.Add(tenant);
+                        }
+                    }
+                    break;
+                case "Электричество":
+                    foreach (var tenant in allTenants)
+                    {
+                        if (tenant.Electricity.ToString().ToString().ToLower().Contains(critValue))
+                        {
+                            defeniteTenats.Add(tenant);
+                        }
+                    }
+                    break;
+                case "Коммунальные услуги":
+                    foreach (var tenant in allTenants)
+                    {
+                        if (tenant.Utilities.ToString().ToString().ToLower().Contains(critValue))
+                        {
+                            defeniteTenats.Add(tenant);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return defeniteTenats;
         }
     }
 }
