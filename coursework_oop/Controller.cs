@@ -86,5 +86,70 @@ namespace coursework_oop
             _service.addRecord(new Tenant(id, firstName, lastName, apartNumb,
                 rent, electricity, utilities));
         }
+
+        public void deleteRecord(long id)
+        {
+            _service.deleteRecord(id);
+        }
+
+        public void updateRecord(string id, string firstName, string lastName, string apartNumb,
+           string rent, string electricity, string utilities)
+        {
+            if (!Regex.IsMatch(firstName, RegsAndConsts.strings) ||
+                firstName.Length < RegsAndConsts.minLengthStr)
+            {
+                throw new NotStringException();
+            }
+
+            if (!Regex.IsMatch(lastName, RegsAndConsts.strings) ||
+                lastName.Length < RegsAndConsts.minLengthStr)
+            {
+                throw new NotStringException();
+            }
+
+            if (!Regex.IsMatch(apartNumb, RegsAndConsts.ints))
+            {
+                throw new NotIntException();
+            }
+
+            if (!Regex.IsMatch(rent , RegsAndConsts.doubles))
+            {
+                throw new NotDoubleException();
+            }
+
+            if (!Regex.IsMatch(electricity, RegsAndConsts.doubles))
+            {
+                throw new NotDoubleException();
+            }
+
+            if (!Regex.IsMatch(utilities, RegsAndConsts.doubles))
+            {
+                throw new NotDoubleException();
+            }
+            List<Tenant> allTenants = _service.GetAllTenants();
+            int cnt = 0;
+            foreach (Tenant current in allTenants)
+            {
+                if (current.AppartamentNumb == int.Parse(apartNumb))
+                {
+                    if (current.Id == long.Parse(id))
+                    {
+                        continue;
+                    }
+                    cnt++;
+                }
+            }
+            if (!(cnt <= RegsAndConsts.maxCntTenants - 1))
+            {
+                throw new MaxCntPersonException();
+            }
+            _service.updateRecord(new Tenant(long.Parse(id), firstName, lastName, int.Parse(apartNumb),
+                double.Parse(rent), double.Parse(electricity), double.Parse(utilities)));
+        }
+
+        public void safeDb()
+        {
+            _service.safeDb();
+        }
     }
 }

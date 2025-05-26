@@ -5,6 +5,7 @@ namespace coursework_oop
     public partial class MainForm : Form
     {
         private Controller _controller;
+        private string currentValue;
         public MainForm(Controller dataBaseWorker)
         {
             InitializeComponent();
@@ -17,6 +18,9 @@ namespace coursework_oop
             mainTable.Columns[4].Name = "Аренда";
             mainTable.Columns[5].Name = "Электричество";
             mainTable.Columns[6].Name = "Коммунальные услуги";
+            mainTable.Columns[0].ReadOnly = true;
+            mainTable.CellEndEdit += updateRecord;
+            mainTable.CellBeginEdit += safeCurrentValue;
             mainTable.Dock = DockStyle.Fill;
             mainTable.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
@@ -57,9 +61,38 @@ namespace coursework_oop
             subForm.ShowDialog();
         }
 
+        private void safeCurrentValue(object sender, EventArgs e)
+        {
+            int currentRow = mainTable.CurrentCell.RowIndex;
+            int currentColumn = mainTable.CurrentCell.ColumnIndex;
+            currentValue = mainTable.Rows[currentRow].Cells[currentColumn].Value.ToString();
+        }
+        private void updateRecord(object sender, EventArgs e)
+        {
+            int currentRow = mainTable.CurrentCell.RowIndex;
+            int currentColumn = mainTable.CurrentCell.ColumnIndex;
+            try
+            {
+                string id = mainTable.Rows[currentRow].Cells[0].Value.ToString();
+                string lastName = mainTable.Rows[currentRow].Cells[1].Value.ToString();
+                string firstName = mainTable.Rows[currentRow].Cells[2].Value.ToString();
+                string apartNumb = mainTable.Rows[currentRow].Cells[3].Value.ToString();
+                string rent = mainTable.Rows[currentRow].Cells[4].Value.ToString();
+                string electricity = mainTable.Rows[currentRow].Cells[5].Value.ToString();
+                string utilities = mainTable.Rows[currentRow].Cells[6].Value.ToString();
+                _controller.updateRecord(id, firstName, lastName, apartNumb,
+                    rent, electricity, utilities);
+            }
+            catch (Exception ex) 
+            {
+                mainTable.Rows[currentRow].Cells[currentColumn].Value = currentValue;
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private void safeButton_Click(object sender, EventArgs e)
         {
-
+            _controller.safeDb();
         }
 
         private void addButton_Click(object sender, EventArgs e)
@@ -93,6 +126,16 @@ namespace coursework_oop
             deleteDbButton.Enabled = false;
         }
 
-
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            int current = mainTable.CurrentCell.RowIndex;
+            if (current != -1) 
+            {
+                _controller.deleteRecord(Convert.ToInt64(mainTable.Rows[current].Cells[0].Value));
+                List<Tenant> tenantList = _controller.GetAllTenants();
+                FillMainTable(tenantList);
+                deleteDbButton.Enabled = true;
+            }
+        }
     }
 }
