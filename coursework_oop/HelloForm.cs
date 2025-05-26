@@ -1,18 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using static System.Windows.Forms.DataFormats;
 
 namespace coursework_oop
 {
+    /// <summary>
+    /// Приветственная форма, отображаемая при запуске приложения.
+    /// Через заданное время автоматически закрывается и открывает главное окно.
+    /// </summary>
     public partial class HelloForm : Form
     {
-        System.Windows.Forms.Timer _timer;
+        /// <summary>
+        /// Таймер для автоматического перехода на главное окно.
+        /// </summary>
+        private System.Windows.Forms.Timer _timer;
+
+        /// <summary>
+        /// Инициализирует компоненты формы и запускает таймер.
+        /// </summary>
         public HelloForm()
         {
             InitializeComponent();
@@ -22,6 +26,12 @@ namespace coursework_oop
             _timer.Start();
         }
 
+        /// <summary>
+        /// Обработчик события Tick таймера. 
+        /// Скрывает текущую форму и открывает главное окно приложения.
+        /// </summary>
+        /// <param name="sender">Источник события.</param>
+        /// <param name="e">Аргументы события.</param>
         private void OnTimerTick(object sender, EventArgs e)
         {
             _timer.Stop();

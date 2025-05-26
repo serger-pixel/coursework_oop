@@ -1,5 +1,3 @@
-using System.Drawing.Printing;
-using System.Windows.Forms;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
@@ -7,17 +5,46 @@ namespace coursework_oop
 {
     public partial class MainForm : Form
     {
+        /// <summary>
+        /// Объект контроллера, управляющий взаимодействием с базой данных.
+        /// </summary>
         private Controller _controller;
+
+        /// <summary>
+        /// Хранит значение ячейки до её редактирования для отката изменений при ошибке.
+        /// </summary>
         private string _currentValue;
+
+        /// <summary>
+        /// Общее количество записей в таблице.
+        /// </summary>
         public int cntAllRecords = 0;
+
+        /// <summary>
+        /// Количество найденных записей после фильтрации.
+        /// </summary>
         public int cntFindRecords = 0;
 
+        /// <summary>
+        /// Текущий критерий поиска (например, "Имя", "ID").
+        /// </summary>
         public string crit;
+
+        /// <summary>
+        /// Значение, используемое для поиска записей.
+        /// </summary>
         public string critValue;
 
+        /// <summary>
+        /// Флаг, указывающий, открыта ли сейчас база данных.
+        /// </summary>
         private bool isOpen = false;
 
-
+        /// <summary>
+        /// Конструктор главной формы.
+        /// Инициализирует элементы управления и настраивает начальное состояние формы.
+        /// </summary>
+        /// <param name="dataBaseWorker">Экземпляр контроллера для работы с базой данных.</param>
         public MainForm(Controller dataBaseWorker)
         {
             InitializeComponent();
@@ -60,6 +87,13 @@ namespace coursework_oop
 
         }
 
+        /// <summary>
+        /// Обработчик события нажатия на кнопку открытия базы данных.
+        /// Открывает диалоговое окно для выбора файла базы данных (.db),
+        /// загружает данные из выбранной базы и обновляет интерфейс.
+        /// </summary>
+        /// <param name="sender">Источник события (кнопка).</param>
+        /// <param name="e">Аргументы события.</param>
         private void openButton_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -76,28 +110,34 @@ namespace coursework_oop
                     deleteDbButton.Enabled = true;
                     cntAllRecords = tenantList.Count;
                     cntFindLabel.Text = $"Всего записей: {cntAllRecords}";
-                    if (!isOpen)
-                    {
-                        openDbButton.Enabled = false;
-                        closeDbButton.Enabled = true;
-                        isOpen = !isOpen;
-                    }
+                    openDbButton.Enabled = false;
+                    closeDbButton.Enabled = true;
+                    isOpen = !isOpen;
                 }
             }
         }
 
+        /// <summary>
+        /// Обработчик события нажатия на кнопку закрытия текущей базы данных.
+        /// Очищает таблицу данных, сбрасывает счётчики и обновляет состояние элементов управления.
+        /// </summary>
+        /// <param name="sender">Источник события (кнопка закрытия базы данных).</param>
+        /// <param name="e">Аргументы события.</param>
         private void closeDbButton_Click(object sender, EventArgs e)
         {
             mainTable.Rows.Clear();
-            if (isOpen)
-            {
-                openDbButton.Enabled = true;
-                closeDbButton.Enabled = false;
-                isOpen = !isOpen;
-            }
+            cntFindLabel.Text = "Всего записей: 0";
+            openDbButton.Enabled = true;
+            closeDbButton.Enabled = false;
+            isOpen = !isOpen;
         }
 
-
+        /// <summary>
+        /// Обработчик события нажатия на кнопку создания новой записи или базы данных.
+        /// Проверяет, открыта ли текущая база данных. Если да — открывает диалоговое окно для создания новой записи.
+        /// </summary>
+        /// <param name="sender">Источник события (кнопка создания).</param>
+        /// <param name="e">Аргументы события.</param>
         private void createButton_Click(object sender, EventArgs e)
         {
             if (!isOpen)
@@ -109,12 +149,26 @@ namespace coursework_oop
             subForm.ShowDialog();
         }
 
+        /// <summary>
+        /// Обработчик события начала редактирования ячейки в DataGridView.
+        /// Сохраняет текущее значение ячейки перед редактированием для последующего восстановления в случае ошибки.
+        /// </summary>
+        /// <param name="sender">Источник события (объект, инициировавший событие).</param>
+        /// <param name="e">Аргументы события.</param>
         private void safeCurrentValue(object sender, EventArgs e)
         {
             int currentRow = mainTable.CurrentCell.RowIndex;
             int currentColumn = mainTable.CurrentCell.ColumnIndex;
             _currentValue = mainTable.Rows[currentRow].Cells[currentColumn].Value.ToString();
         }
+
+        /// <summary>
+        /// Обработчик события завершения редактирования ячейки в таблице.
+        /// Обновляет данные записи в базе данных через контроллер.
+        /// При возникновении ошибки откатывает изменение ячейки к предыдущему значению.
+        /// </summary>
+        /// <param name="sender">Источник события (таблица).</param>
+        /// <param name="e">Аргументы события.</param>
         private void updateRecord(object sender, EventArgs e)
         {
             int currentRow = mainTable.CurrentCell.RowIndex;
@@ -138,6 +192,13 @@ namespace coursework_oop
             }
         }
 
+        /// <summary>
+        /// Обработчик события поиска записей в таблице.
+        /// Фильтрует данные на основе выбранного критерия и значения из текстового поля.
+        /// Подсвечивает совпадающие строки и обновляет статистику.
+        /// </summary>
+        /// <param name="sender">Источник события (обычно текстовое поле).</param>
+        /// <param name="e">Аргументы события.</param>
         public void find(object sender, EventArgs e)
         {
             if (!isOpen)
@@ -196,6 +257,10 @@ namespace coursework_oop
             cntFindLabel.Text = $"Найдено: {cntFindRecords} из {cntAllRecords}";
         }
 
+        /// <summary>
+        /// Обработчик нажатия кнопки "Сохранить".
+        /// Вызывает метод контроллера для сохранения текущих данных в базу.
+        /// </summary>
         private void safeButton_Click(object sender, EventArgs e)
         {
             if (!isOpen)
@@ -206,6 +271,11 @@ namespace coursework_oop
             _controller.safeDb();
         }
 
+        /// <summary>
+        /// Обработчик нажатия кнопки "Добавить запись".
+        /// Открывает форму добавления новой записи как модальное окно.
+        /// После добавления вызывает обновление таблицы и поиск.
+        /// </summary>
         private void addButton_Click(object sender, EventArgs e)
         {
             if (!isOpen)
@@ -218,6 +288,11 @@ namespace coursework_oop
             find(null, null);
         }
 
+        /// <summary>
+        /// Заполняет DataGridView данными из списка арендаторов.
+        /// Предварительно очищает таблицу.
+        /// </summary>
+        /// <param name="tenants">Список объектов Tenant для отображения в таблице.</param>
         public void FillMainTable(List<Tenant> tenants)
         {
             mainTable.Rows.Clear();
@@ -236,6 +311,10 @@ namespace coursework_oop
             }
         }
 
+        /// <summary>
+        /// Обработчик нажатия кнопки "Удалить БД".
+        /// Удаляет текущую базу данных через контроллер и очищает таблицу.
+        /// </summary>
         private void deleteDbButton_Click(object sender, EventArgs e)
         {
             if (!isOpen)
@@ -248,6 +327,10 @@ namespace coursework_oop
             find(null, null);
         }
 
+        /// <summary>
+        /// Обработчик нажатия кнопки "Удалить запись".
+        /// Удаляет выбранную запись из БД и обновляет таблицу.
+        /// </summary>
         private void deleteButton_Click(object sender, EventArgs e)
         {
             if (!isOpen)
@@ -266,11 +349,19 @@ namespace coursework_oop
 
         }
 
+        /// <summary>
+        /// Обработчик изменения выбранного критерия поиска.
+        /// Вызывает поиск без дополнительных параметров.
+        /// </summary>
         private void searchComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             find(null, null);
         }
 
+        /// <summary>
+        /// Обработчик нажатия кнопки "Фильтр".
+        /// Открывает форму фильтрации записей как модальное окно.
+        /// </summary>
         private void filterButton_Click(object sender, EventArgs e)
         {
             if (!isOpen)
@@ -282,10 +373,11 @@ namespace coursework_oop
             subForm.ShowDialog();
         }
 
-        private void panelButtons_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+        /// <summary>
+        /// Экспортирует данные из DataGridView в файл формата PDF.
+        /// Показывает диалог выбора пути сохранения.
+        /// </summary>
+        /// <param name="dataGridView">Таблица с данными для экспорта.</param>
         public void exportDataGridViewToPdf(DataGridView dataGridView)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -337,6 +429,10 @@ namespace coursework_oop
             }
         }
 
+        /// <summary>
+        /// Обработчик нажатия кнопки "Экспорт в PDF".
+        /// Вызывает метод экспорта данных таблицы в PDF-файл.
+        /// </summary>
         private void exportButton_Click(object sender, EventArgs e)
         {
             if (!isOpen)

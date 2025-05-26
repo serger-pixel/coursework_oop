@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
-using System.IO;
-using System.Data;
-using System.Text.RegularExpressions;
+﻿using Microsoft.Data.Sqlite;
 
 namespace coursework_oop
 {
+    /// <summary>
+    /// Содержит константы для имен полей таблицы базы данных.
+    /// </summary>
     public static class Fields
     {
         public const string ID = "_id";
@@ -21,21 +16,42 @@ namespace coursework_oop
         public const string UTILITIES = "_utilities";
     }
 
+    /// <summary>
+    /// Перечисление, определяющее статус открытия базы данных: новая или существующая.
+    /// </summary>
     public enum Statuses
     {
         NEW,
         EXISTING
     }
 
+    /// <summary>
+    /// Класс Service обеспечивает прямое взаимодействие с базой данных SQLite.
+    /// Реализует операции CRUD и управляет жизненным циклом БД.
+    /// </summary>
     public class Service
     {
+        /// <summary>
+        /// Название таблицы в БД.
+        /// </summary>
+        private const string tableName = "tenants";
 
-        const string tableName = "tenants";
-
+        /// <summary>
+        /// Путь к локальной БД.
+        /// </summary>
         public const string pathOfCopy = "./local.db";
 
+        /// <summary>
+        /// Путь к БД.
+        /// </summary>
         public string Path { get; private set; }
 
+        /// <summary>
+        /// Открывает указанную базу данных.
+        /// Если указана как новая — создаёт её.
+        /// </summary>
+        /// <param name="path">Путь к файлу базы данных.</param>
+        /// <param name="status">Статус открытия: существующая или новая БД.</param>
         public void openDataBase(string path, Statuses status)
         {
             if (status == Statuses.NEW)
@@ -46,6 +62,10 @@ namespace coursework_oop
             Path = path;
         }
 
+        /// <summary>
+        /// Создаёт новую базу данных с необходимой структурой.
+        /// </summary>
+        /// <param name="path">Путь, по которому будет создана БД.</param>
         private void createDataBase(string path)
         {
             using (var localConnection = new SqliteConnection($"Data Source={path}"))
@@ -62,7 +82,6 @@ namespace coursework_oop
                     {Fields.ELECTRICITY} REAL NOT NULL,
                     {Fields.UTILITIES} REAL NOT NULL
                 );";
-
                 using (var command = new SqliteCommand(createTableQuery, localConnection))
                 {
                     command.ExecuteNonQuery();
@@ -70,22 +89,36 @@ namespace coursework_oop
             }
         }
 
+        /// <summary>
+        /// Закрывает текущую базу данных.
+        /// </summary>
         public void closeDataBase()
         {
             Path = null;
             File.Delete(pathOfCopy);
         }
 
+        /// <summary>
+        /// Удаляет физически файл базы данных.
+        /// </summary>
         public void deleteDataBase()
         {
             File.Delete(Path);
             Path = null;
         }
 
+        /// <summary>
+        /// Сохраняет текущее состояние базы данных на диск.
+        /// </summary>
         public void safeDb()
         {
             File.Copy(pathOfCopy, Path, overwrite: true);
         }
+
+        /// <summary>
+        /// Добавляет нового арендатора в БД.
+        /// </summary>
+        /// <param name="person">Объект Tenant с данными арендатора.</param>
         public void addRecord(Tenant person)
         {
             string query = $@"
@@ -121,18 +154,20 @@ namespace coursework_oop
                     command.Parameters.AddWithValue("@rent", person.Rent);
                     command.Parameters.AddWithValue("@electricity", person.Electricity);
                     command.Parameters.AddWithValue("@utilities", person.Utilities);
-
                     command.ExecuteNonQuery();
                 }
             }
         }
 
+        /// <summary>
+        /// Удаляет запись арендатора по его ID.
+        /// </summary>
+        /// <param name="id">ID арендатора.</param>
         public void deleteRecord(long id)
         {
             string query = $@"
         DELETE FROM {tableName} 
         WHERE {Fields.ID} = @id;";
-
             using (var localConnection = new SqliteConnection($"Data Source={pathOfCopy}"))
             {
                 localConnection.Open();
@@ -144,6 +179,10 @@ namespace coursework_oop
             }
         }
 
+        /// <summary>
+        /// Обновляет данные арендатора в БД.
+        /// </summary>
+        /// <param name="person">Объект Tenant с обновлёнными данными.</param>
         public void updateRecord(Tenant person)
         {
             string query = $@"
@@ -155,7 +194,6 @@ namespace coursework_oop
             {Fields.ELECTRICITY} = @electricity,
             {Fields.UTILITIES} = @utilities
         WHERE {Fields.ID} = @id;";
-
             using (var localConnection = new SqliteConnection($"Data Source={pathOfCopy}"))
             {
                 localConnection.Open();
@@ -168,12 +206,16 @@ namespace coursework_oop
                     command.Parameters.AddWithValue("@rent", person.Rent);
                     command.Parameters.AddWithValue("@electricity", person.Electricity);
                     command.Parameters.AddWithValue("@utilities", person.Utilities);
-
                     command.ExecuteNonQuery();
                 }
             }
         }
 
+        /// <summary>
+        /// Возвращает запись арендатора по его ID.
+        /// </summary>
+        /// <param name="id">ID арендатора.</param>
+        /// <returns>Объект Tenant или null, если не найден.</returns>
         public Tenant selectRecord(int id)
         {
             string query = $@"
@@ -187,14 +229,12 @@ namespace coursework_oop
             {Fields.UTILITIES}
         FROM {tableName}
         WHERE {Fields.ID} = @id;";
-
             using (var localConnection = new SqliteConnection($"Data Source={pathOfCopy}"))
             {
                 localConnection.Open();
                 using (var command = new SqliteCommand(query, localConnection))
                 {
                     command.Parameters.AddWithValue("@id", id);
-
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
@@ -218,10 +258,13 @@ namespace coursework_oop
             }
         }
 
+        /// <summary>
+        /// Возвращает список всех арендаторов из БД.
+        /// </summary>
+        /// <returns>Список объектов Tenant.</returns>
         public List<Tenant> GetAllTenants()
         {
             var tenants = new List<Tenant>();
-
             string query = $@"
         SELECT 
             {Fields.ID}, 
@@ -232,7 +275,6 @@ namespace coursework_oop
             {Fields.ELECTRICITY}, 
             {Fields.UTILITIES}
         FROM {tableName};";
-
             using (var localConnection = new SqliteConnection($"Data Source={pathOfCopy}"))
             {
                 localConnection.Open();
@@ -255,14 +297,19 @@ namespace coursework_oop
                     }
                 }
             }
-
             return tenants;
         }
 
+        /// <summary>
+        /// Фильтрует арендаторов по заданному критерию и значению.
+        /// </summary>
+        /// <param name="crit">Критерий фильтрации: Имя, Фамилия, Номер квартиры и т.д.</param>
+        /// <param name="critValue">Значение критерия для фильтрации.</param>
+        /// <returns>Отфильтрованный список арендаторов.</returns>
         public List<Tenant> getDefiniteTenants(string crit, string critValue)
         {
             List<Tenant> allTenants = GetAllTenants();
-            List<Tenant> defeniteTenats = new List<Tenant>();
+            List<Tenant> definiteTenants = new List<Tenant>();
             critValue = critValue.ToLower();
             switch (crit)
             {
@@ -271,7 +318,7 @@ namespace coursework_oop
                     {
                         if (tenant.FirstName.ToString().ToLower().Contains(critValue))
                         {
-                            defeniteTenats.Add(tenant);
+                            definiteTenants.Add(tenant);
                         }
                     }
                     break;
@@ -280,7 +327,7 @@ namespace coursework_oop
                     {
                         if (tenant.LastName.ToString().ToLower().Contains(critValue))
                         {
-                            defeniteTenats.Add(tenant);
+                            definiteTenants.Add(tenant);
                         }
                     }
                     break;
@@ -289,7 +336,7 @@ namespace coursework_oop
                     {
                         if (tenant.AppartamentNumb.ToString().ToLower().Contains(critValue))
                         {
-                            defeniteTenats.Add(tenant);
+                            definiteTenants.Add(tenant);
                         }
                     }
                     break;
@@ -298,7 +345,7 @@ namespace coursework_oop
                     {
                         if (tenant.Rent.ToString().ToString().ToLower().Contains(critValue))
                         {
-                            defeniteTenats.Add(tenant);
+                            definiteTenants.Add(tenant);
                         }
                     }
                     break;
@@ -307,7 +354,7 @@ namespace coursework_oop
                     {
                         if (tenant.Electricity.ToString().ToString().ToLower().Contains(critValue))
                         {
-                            defeniteTenats.Add(tenant);
+                            definiteTenants.Add(tenant);
                         }
                     }
                     break;
@@ -316,14 +363,14 @@ namespace coursework_oop
                     {
                         if (tenant.Utilities.ToString().ToString().ToLower().Contains(critValue))
                         {
-                            defeniteTenats.Add(tenant);
+                            definiteTenants.Add(tenant);
                         }
                     }
                     break;
                 default:
                     break;
             }
-            return defeniteTenats;
+            return definiteTenants;
         }
     }
 }

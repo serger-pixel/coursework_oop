@@ -116,7 +116,6 @@
             panelButtons.Name = "panelButtons";
             panelButtons.Size = new Size(1467, 190);
             panelButtons.TabIndex = 5;
-            panelButtons.Paint += panelButtons_Paint;
             // 
             // cntFindLabel
             // 

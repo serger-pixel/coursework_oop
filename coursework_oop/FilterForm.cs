@@ -1,21 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace coursework_oop
 {
+    /// <summary>
+    /// Форма фильтрации записей по заданному критерию.
+    /// Позволяет пользователю выбрать поле и значение для фильтрации данных в таблице.
+    /// </summary>
     public partial class FilterForm : Form
     {
+        /// <summary>
+        /// Экземпляр контроллера для работы с базой данных.
+        /// </summary>
         private Controller _controller;
 
+        /// <summary>
+        /// Ссылка на главную форму для обновления отображения данных.
+        /// </summary>
         private MainForm _mainForm;
 
+        /// <summary>
+        /// Инициализирует новый экземпляр формы фильтрации.
+        /// </summary>
+        /// <param name="controller">Контроллер, управляющий логикой работы с данными.</param>
+        /// <param name="mainForm">Главное окно приложения для обновления таблицы и меток.</param>
         public FilterForm(Controller controller, MainForm mainForm)
         {
             InitializeComponent();
@@ -23,6 +33,10 @@ namespace coursework_oop
             _mainForm = mainForm;
         }
 
+        /// <summary>
+        /// Обработчик нажатия кнопки "Применить фильтр".
+        /// Выполняет фильтрацию данных и обновляет таблицу в главной форме.
+        /// </summary>
         private void filterButton_Click(object sender, EventArgs e)
         {
             try
@@ -41,6 +55,10 @@ namespace coursework_oop
             }
         }
 
+        /// <summary>
+        /// Обработчик нажатия кнопки "Отменить фильтр".
+        /// Возвращает исходные данные и очищает фильтры в главной форме.
+        /// </summary>
         private void cancelFilterButton_Click(object sender, EventArgs e)
         {
             List<Tenant> allTenants = _controller.GetAllTenants();
