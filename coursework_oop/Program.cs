@@ -10,7 +10,8 @@ namespace coursework_oop
         {
             ApplicationConfiguration.Initialize();
             Controller dataBaseworker = new Controller();
-            Application.Run(new MainForm(dataBaseworker));
+            HelloForm helloForm = new HelloForm();
+            Application.Run(helloForm);
             dataBaseworker.closeDataBase();
         }
     }

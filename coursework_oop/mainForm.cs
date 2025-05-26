@@ -1,4 +1,7 @@
+using System.Drawing.Printing;
 using System.Windows.Forms;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace coursework_oop
 {
@@ -11,6 +14,8 @@ namespace coursework_oop
 
         public string crit;
         public string critValue;
+
+        private bool isOpen = false;
 
 
         public MainForm(Controller dataBaseWorker)
@@ -37,8 +42,12 @@ namespace coursework_oop
             cntFindLabel.Text = "Всего записей: 0";
             cntFindLabel.Size = new Size(100, 25);
 
-            panelButtons.Height = 120;
+            panelButtons.Height = 180;
             panelButtons.Dock = DockStyle.Top;
+
+            closeDbButton.Enabled = false;
+
+            searchComboBox.Text = "ID";
 
             SplitContainer splitContainer = new SplitContainer(); ;
             splitContainer.Orientation = Orientation.Horizontal;
@@ -49,14 +58,13 @@ namespace coursework_oop
 
             Controls.Add(splitContainer);
 
-
         }
 
         private void openButton_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "*.db|";
+                openFileDialog.Filter = "Database Files (*.db)|*.db";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
 
@@ -68,13 +76,35 @@ namespace coursework_oop
                     deleteDbButton.Enabled = true;
                     cntAllRecords = tenantList.Count;
                     cntFindLabel.Text = $"Всего записей: {cntAllRecords}";
+                    if (!isOpen)
+                    {
+                        openDbButton.Enabled = false;
+                        closeDbButton.Enabled = true;
+                        isOpen = !isOpen;
+                    }
                 }
+            }
+        }
+
+        private void closeDbButton_Click(object sender, EventArgs e)
+        {
+            mainTable.Rows.Clear();
+            if (isOpen)
+            {
+                openDbButton.Enabled = true;
+                closeDbButton.Enabled = false;
+                isOpen = !isOpen;
             }
         }
 
 
         private void createButton_Click(object sender, EventArgs e)
         {
+            if (!isOpen)
+            {
+                MessageBox.Show("База данных не открыта");
+                return;
+            }
             newDbForm subForm = new newDbForm(_controller, this);
             subForm.ShowDialog();
         }
@@ -108,8 +138,12 @@ namespace coursework_oop
             }
         }
 
-        private void find(object sender, EventArgs e)
+        public void find(object sender, EventArgs e)
         {
+            if (!isOpen)
+            {
+                return;
+            }
             cntAllRecords = _controller.GetAllTenants().Count;
             crit = searchComboBox.Text;
             critValue = searchBox.Text;
@@ -164,11 +198,21 @@ namespace coursework_oop
 
         private void safeButton_Click(object sender, EventArgs e)
         {
+            if (!isOpen)
+            {
+                MessageBox.Show("База данных не открыта");
+                return;
+            }
             _controller.safeDb();
         }
 
         private void addButton_Click(object sender, EventArgs e)
         {
+            if (!isOpen)
+            {
+                MessageBox.Show("База данных не открыта");
+                return;
+            }
             AddRecordForm subForm = new AddRecordForm(_controller, this);
             subForm.ShowDialog();
             find(null, null);
@@ -194,14 +238,23 @@ namespace coursework_oop
 
         private void deleteDbButton_Click(object sender, EventArgs e)
         {
+            if (!isOpen)
+            {
+                MessageBox.Show("База данных не открыта");
+                return;
+            }
             mainTable.Rows.Clear();
             _controller.deleteDataBase();
-            deleteDbButton.Enabled = false;
             find(null, null);
         }
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
+            if (!isOpen)
+            {
+                MessageBox.Show("База данных не открыта");
+                return;
+            }
             int current = mainTable.CurrentCell.RowIndex;
             if (current != -1)
             {
@@ -220,6 +273,11 @@ namespace coursework_oop
 
         private void filterButton_Click(object sender, EventArgs e)
         {
+            if (!isOpen)
+            {
+                MessageBox.Show("База данных не открыта");
+                return;
+            }
             FilterForm subForm = new FilterForm(_controller, this);
             subForm.ShowDialog();
         }
@@ -227,6 +285,67 @@ namespace coursework_oop
         private void panelButtons_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+        public void exportDataGridViewToPdf(DataGridView dataGridView)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = "some.pdf";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = saveFileDialog.FileName;
+
+                Document document = new Document(PageSize.A4, 10f, 10f, 10f, 10f);
+
+                try
+                {
+                    PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(filePath, FileMode.Create));
+                    document.Open();
+
+                    PdfPTable table = new PdfPTable(dataGridView.Columns.Count);
+
+                    foreach (DataGridViewColumn column in dataGridView.Columns)
+                    {
+                        PdfPCell cell = new PdfPCell(new Phrase(column.HeaderText));
+                        cell.BackgroundColor = new BaseColor(220, 220, 220);
+                        table.AddCell(cell);
+                    }
+
+                    foreach (DataGridViewRow row in dataGridView.Rows)
+                    {
+                        foreach (DataGridViewCell cell in row.Cells)
+                        {
+                            if (cell.Value != null)
+                            {
+                                table.AddCell(cell.Value.ToString());
+                            }
+                        }
+                    }
+
+                    document.Add(table);
+
+                    MessageBox.Show("Данные успешно экспортированы в PDF!", "Экспорт завершен", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка при экспорте в PDF:\n" + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    document.Close();
+                }
+            }
+        }
+
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            if (!isOpen)
+            {
+                MessageBox.Show("База данных не открыта");
+                return;
+            }
+
+            exportDataGridViewToPdf(mainTable);
         }
     }
 }

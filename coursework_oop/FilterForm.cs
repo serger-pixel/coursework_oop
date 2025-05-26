@@ -32,6 +32,7 @@ namespace coursework_oop
                 _mainForm.cntFindRecords = definiteTenants.Count;
                 _mainForm.cntAllRecords = _controller.GetAllTenants().Count;
                 _mainForm.cntFindLabel.Text = $"Найдено: {_mainForm.cntFindRecords} из {_mainForm.cntAllRecords}";
+                _mainForm.find(null, null);
                 Close();
             }
             catch (Exception ex)
@@ -47,6 +48,7 @@ namespace coursework_oop
             _mainForm.critValue = null;
             _mainForm.crit = null;
             _mainForm.cntFindLabel.Text = $"Всего записей: {allTenants.Count}";
+            _mainForm.find(null, null);
             Close();
         }
     }

@@ -24,7 +24,7 @@ namespace coursework_oop
         /// <summary>
         /// Регулярное выражение для вещественных чисел
         /// </summary>
-        public const String doubles = @"^(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$";
+        public const String doubles = @"^\d+(,\d+)?$";
 
         /// <summary>
         /// Минимальная длина строчки
@@ -118,12 +118,6 @@ namespace coursework_oop
         /// </summary>
         public const string minLenghtStrError = "Длина строчки должна составлять не менее 5 символов";
 
-
-        /// <summary>
-        /// Сообщение об ошибке, когда пользователя не существует.
-        /// </summary>
-        public const string userNotExistsError = "Такого пользователя не сущестует.";
-
         /// <summary>
         /// Сообщение об ошибке, когда пользователь уже существует.
         /// </summary>
@@ -191,19 +185,6 @@ namespace coursework_oop
         /// Конструктор для создания экземпляра NotDoubleException с указанным сообщением.
         /// </summary>
         public NotDoubleException() : base(ErrorMessages.notDoubleError)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Исключение, выбрасываемое, когда пользователь не существует.
-    /// </summary>
-    public class UserNotExistsException : Exception
-    {
-        /// <summary>
-        /// Конструктор для создания экземпляра UserNotExistsException с указанным сообщением.
-        /// </summary>
-        public UserNotExistsException() : base(ErrorMessages.userNotExistsError)
         {
         }
     }

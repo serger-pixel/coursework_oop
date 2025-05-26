@@ -210,6 +210,7 @@
             Controls.Add(firstNameLabel);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "AddRecordForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Добавление";
             ((System.ComponentModel.ISupportInitialize)utilitiesValue).EndInit();
             ((System.ComponentModel.ISupportInitialize)electricityValue).EndInit();

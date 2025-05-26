@@ -42,6 +42,8 @@
             searchLabel = new Label();
             addButton = new Button();
             deleteDbButton = new Button();
+            closeDbButton = new Button();
+            exportButton = new Button();
             ((System.ComponentModel.ISupportInitialize)mainTable).BeginInit();
             panelButtons.SuspendLayout();
             SuspendLayout();
@@ -67,7 +69,7 @@
             // 
             // createDbButton
             // 
-            createDbButton.Location = new Point(29, 42);
+            createDbButton.Location = new Point(29, 106);
             createDbButton.Name = "createDbButton";
             createDbButton.Size = new Size(214, 34);
             createDbButton.TabIndex = 2;
@@ -97,6 +99,7 @@
             // 
             // panelButtons
             // 
+            panelButtons.Controls.Add(exportButton);
             panelButtons.Controls.Add(cntFindLabel);
             panelButtons.Controls.Add(searchComboBox);
             panelButtons.Controls.Add(filterButton);
@@ -107,10 +110,11 @@
             panelButtons.Controls.Add(deleteDbButton);
             panelButtons.Controls.Add(deleteButton);
             panelButtons.Controls.Add(createDbButton);
+            panelButtons.Controls.Add(closeDbButton);
             panelButtons.Controls.Add(openDbButton);
             panelButtons.Location = new Point(12, 22);
             panelButtons.Name = "panelButtons";
-            panelButtons.Size = new Size(1467, 216);
+            panelButtons.Size = new Size(1467, 190);
             panelButtons.TabIndex = 5;
             panelButtons.Paint += panelButtons_Paint;
             // 
@@ -172,13 +176,33 @@
             // deleteDbButton
             // 
             deleteDbButton.Enabled = false;
-            deleteDbButton.Location = new Point(29, 82);
+            deleteDbButton.Location = new Point(29, 146);
             deleteDbButton.Name = "deleteDbButton";
             deleteDbButton.Size = new Size(214, 34);
             deleteDbButton.TabIndex = 3;
             deleteDbButton.Text = "Удалить базу данных";
             deleteDbButton.UseVisualStyleBackColor = true;
             deleteDbButton.Click += deleteDbButton_Click;
+            // 
+            // closeDbButton
+            // 
+            closeDbButton.Location = new Point(29, 43);
+            closeDbButton.Name = "closeDbButton";
+            closeDbButton.Size = new Size(214, 34);
+            closeDbButton.TabIndex = 1;
+            closeDbButton.Text = "Закрыть базу данных";
+            closeDbButton.UseVisualStyleBackColor = true;
+            closeDbButton.Click += closeDbButton_Click;
+            // 
+            // exportButton
+            // 
+            exportButton.Location = new Point(1193, 122);
+            exportButton.Name = "exportButton";
+            exportButton.Size = new Size(202, 34);
+            exportButton.TabIndex = 10;
+            exportButton.Text = "Экспортировать";
+            exportButton.UseVisualStyleBackColor = true;
+            exportButton.Click += exportButton_Click;
             // 
             // MainForm
             // 
@@ -212,5 +236,7 @@
         private Label searchLabel;
         private ComboBox searchComboBox;
         public Label cntFindLabel;
+        private Button closeDbButton;
+        private Button exportButton;
     }
 }

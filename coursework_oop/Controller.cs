@@ -143,6 +143,27 @@ namespace coursework_oop
             {
                 throw new MaxCntPersonException();
             }
+
+            if (int.Parse(apartNumb) < RegsAndConsts.minNumbAppart || int.Parse(apartNumb) > RegsAndConsts.maxNumbAppart)
+            {
+                throw new ApartmentNumberException();
+            }
+
+            if ( double.Parse(rent) < RegsAndConsts.minRent || double.Parse(rent) > RegsAndConsts.maxRent)
+            {
+                throw new RentAmountException();
+            }
+
+            if (double.Parse(electricity) < RegsAndConsts.minElectricity || double.Parse(electricity) > RegsAndConsts.maxElectricity)
+            {
+                throw new ElectricityPaymentException();
+            }
+
+            if (double.Parse(utilities) < RegsAndConsts.minUtilities || double.Parse(utilities) > RegsAndConsts.maxUtilities)
+            {
+                throw new UtilitiesPaymentException();
+            }
+
             _service.updateRecord(new Tenant(long.Parse(id), firstName, lastName, int.Parse(apartNumb),
                 double.Parse(rent), double.Parse(electricity), double.Parse(utilities)));
         }
