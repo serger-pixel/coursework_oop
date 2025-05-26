@@ -34,11 +34,13 @@
             deleteButton = new Button();
             saveButton = new Button();
             panelButtons = new Panel();
+            searchComboBox = new ComboBox();
             filterButton = new Button();
-            textBox1 = new TextBox();
+            searchBox = new TextBox();
             searchLabel = new Label();
             addButton = new Button();
             deleteDbButton = new Button();
+            cntFindLabel = new Label();
             ((System.ComponentModel.ISupportInitialize)mainTable).BeginInit();
             panelButtons.SuspendLayout();
             SuspendLayout();
@@ -84,7 +86,7 @@
             // 
             // saveButton
             // 
-            saveButton.Location = new Point(1001, 82);
+            saveButton.Location = new Point(1189, 82);
             saveButton.Name = "saveButton";
             saveButton.Size = new Size(206, 34);
             saveButton.TabIndex = 4;
@@ -94,8 +96,10 @@
             // 
             // panelButtons
             // 
+            panelButtons.Controls.Add(cntFindLabel);
+            panelButtons.Controls.Add(searchComboBox);
             panelButtons.Controls.Add(filterButton);
-            panelButtons.Controls.Add(textBox1);
+            panelButtons.Controls.Add(searchBox);
             panelButtons.Controls.Add(searchLabel);
             panelButtons.Controls.Add(addButton);
             panelButtons.Controls.Add(saveButton);
@@ -105,8 +109,17 @@
             panelButtons.Controls.Add(openDbButton);
             panelButtons.Location = new Point(12, 22);
             panelButtons.Name = "panelButtons";
-            panelButtons.Size = new Size(1294, 140);
+            panelButtons.Size = new Size(1467, 216);
             panelButtons.TabIndex = 5;
+            // 
+            // searchComboBox
+            // 
+            searchComboBox.Items.AddRange(new object[] { "ID", "Имя", "Фамилия", "Номер квартиры", "Аренда", "Электричество", "Коммунальные услуги" });
+            searchComboBox.Location = new Point(1213, 12);
+            searchComboBox.Name = "searchComboBox";
+            searchComboBox.Size = new Size(182, 33);
+            searchComboBox.TabIndex = 8;
+            searchComboBox.SelectedIndexChanged += searchComboBox_SelectedIndexChanged;
             // 
             // filterButton
             // 
@@ -117,12 +130,12 @@
             filterButton.Text = "Фильтрация";
             filterButton.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // searchBox
             // 
-            textBox1.Location = new Point(895, 12);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(312, 31);
-            textBox1.TabIndex = 6;
+            searchBox.Location = new Point(895, 12);
+            searchBox.Name = "searchBox";
+            searchBox.Size = new Size(312, 31);
+            searchBox.TabIndex = 6;
             // 
             // searchLabel
             // 
@@ -154,11 +167,19 @@
             deleteDbButton.UseVisualStyleBackColor = true;
             deleteDbButton.Click += deleteDbButton_Click;
             // 
+            // cntFindLabel
+            // 
+            cntFindLabel.AutoSize = true;
+            cntFindLabel.Location = new Point(31, 178);
+            cntFindLabel.Name = "cntFindLabel";
+            cntFindLabel.Size = new Size(0, 25);
+            cntFindLabel.TabIndex = 9;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1324, 912);
+            ClientSize = new Size(1491, 912);
             Controls.Add(panelButtons);
             Controls.Add(mainTable);
             Name = "MainForm";
@@ -181,7 +202,9 @@
         private Button addButton;
         public Button deleteDbButton;
         private Button filterButton;
-        private TextBox textBox1;
+        private TextBox searchBox;
         private Label searchLabel;
+        private ComboBox searchComboBox;
+        private Label cntFindLabel;
     }
 }
