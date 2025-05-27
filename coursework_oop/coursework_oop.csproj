@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>images\house_40647.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,12 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="iTextSharp" Version="5.5.13.4" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.3" />
+    <Content Include="images\house_40647.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="images\" />
+    <PackageReference Include="iTextSharp" Version="5.5.13.4" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.3" />
   </ItemGroup>
 
 </Project>
