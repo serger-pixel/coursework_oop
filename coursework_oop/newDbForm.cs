@@ -62,7 +62,7 @@ namespace coursework_oop
 
                 if (folderDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string selectedPath = folderDialog.SelectedPath;
+                    string selectedworkPath = folderDialog.SelectedPath;
                 }
 
                 pathTextBox.Text = folderDialog.SelectedPath;

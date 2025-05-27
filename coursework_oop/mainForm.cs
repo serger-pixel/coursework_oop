@@ -385,13 +385,13 @@ namespace coursework_oop
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string filePath = saveFileDialog.FileName;
+                string fileworkPath = saveFileDialog.FileName;
 
                 Document document = new Document(PageSize.A4, 10f, 10f, 10f, 10f);
 
                 try
                 {
-                    PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(filePath, FileMode.Create));
+                    PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(fileworkPath, FileMode.Create));
                     document.Open();
 
                     PdfPTable table = new PdfPTable(dataGridView.Columns.Count);

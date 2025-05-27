@@ -39,13 +39,28 @@ namespace coursework_oop
         /// <summary>
         /// Путь к локальной БД.
         /// </summary>
-        public const string pathOfCopy = "./local.db";
+        private string pathOfCopy;
 
         /// <summary>
         /// Путь к БД.
         /// </summary>
-        public string Path { get; private set; }
+        public string workPath { get; private set; }
 
+
+        public Service()
+        {
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string folderName = "coursework_oop";
+            string dbName = "local.db";
+
+            string fullworkPath =Path.Combine(appData, folderName);
+            if (!Directory.Exists(fullworkPath))
+            {
+                Directory.CreateDirectory(fullworkPath);
+            }
+
+            pathOfCopy = Path.Combine(fullworkPath, dbName);
+        }
         /// <summary>
         /// Открывает указанную базу данных.
         /// Если указана как новая — создаёт её.
@@ -59,7 +74,7 @@ namespace coursework_oop
                 createDataBase(path);
             }
             File.Copy(path, pathOfCopy, overwrite: true);
-            Path = path;
+            workPath = path;
         }
 
         /// <summary>
@@ -94,7 +109,7 @@ namespace coursework_oop
         /// </summary>
         public void closeDataBase()
         {
-            Path = null;
+            workPath = null;
             File.Delete(pathOfCopy);
         }
 
@@ -103,8 +118,8 @@ namespace coursework_oop
         /// </summary>
         public void deleteDataBase()
         {
-            File.Delete(Path);
-            Path = null;
+            File.Delete(workPath);
+            workPath = null;
         }
 
         /// <summary>
@@ -112,7 +127,7 @@ namespace coursework_oop
         /// </summary>
         public void safeDb()
         {
-            File.Copy(pathOfCopy, Path, overwrite: true);
+            File.Copy(pathOfCopy, workPath, overwrite: true);
         }
 
         /// <summary>
