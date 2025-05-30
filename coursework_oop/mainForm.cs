@@ -1,5 +1,6 @@
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using System.Text;
 
 namespace coursework_oop
 {
@@ -48,6 +49,7 @@ namespace coursework_oop
         public MainForm(Controller dataBaseWorker)
         {
             InitializeComponent();
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             _controller = dataBaseWorker;
             mainTable.ColumnCount = 7;
             mainTable.Columns[0].Name = "ID";
@@ -112,6 +114,7 @@ namespace coursework_oop
                     cntFindLabel.Text = $"Всего записей: {cntAllRecords}";
                     openDbButton.Enabled = false;
                     closeDbButton.Enabled = true;
+                    saveButton.Enabled = false;
                     isOpen = !isOpen;
                 }
             }
@@ -184,6 +187,7 @@ namespace coursework_oop
                 string utilities = mainTable.Rows[currentRow].Cells[6].Value.ToString();
                 _controller.updateRecord(id, firstName, lastName, apartNumb,
                     rent, electricity, utilities);
+                saveButton.Enabled = true;
             }
             catch (Exception ex)
             {
@@ -263,12 +267,9 @@ namespace coursework_oop
         /// </summary>
         private void safeButton_Click(object sender, EventArgs e)
         {
-            if (!isOpen)
-            {
-                MessageBox.Show("База данных не открыта");
-                return;
-            }
             _controller.safeDb();
+            saveButton.Enabled = false;
+
         }
 
         /// <summary>
@@ -382,6 +383,8 @@ namespace coursework_oop
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.FileName = "some.pdf";
+            BaseFont baseFont = BaseFont.CreateFont(@"C:\Windows\Fonts\arial.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+            iTextSharp.text.Font font = new iTextSharp.text.Font(baseFont, iTextSharp.text.Font.DEFAULTSIZE, iTextSharp.text.Font.NORMAL);
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -398,7 +401,7 @@ namespace coursework_oop
 
                     foreach (DataGridViewColumn column in dataGridView.Columns)
                     {
-                        PdfPCell cell = new PdfPCell(new Phrase(column.HeaderText));
+                        PdfPCell cell = new PdfPCell(new Phrase(column.HeaderText, font));
                         cell.BackgroundColor = new BaseColor(220, 220, 220);
                         table.AddCell(cell);
                     }
@@ -409,7 +412,7 @@ namespace coursework_oop
                         {
                             if (cell.Value != null)
                             {
-                                table.AddCell(cell.Value.ToString());
+                                table.AddCell(new Phrase(cell.Value.ToString(), font));
                             }
                         }
                     }

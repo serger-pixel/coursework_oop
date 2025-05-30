@@ -57,6 +57,7 @@ namespace coursework_oop
                 _mainForm.FillMainTable(tenantList);
                 _mainForm.deleteDbButton.Enabled = true;
                 Close();
+                _mainForm.saveButton.Enabled = true;
             }
             catch (Exception ex) 
             {

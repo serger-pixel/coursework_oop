@@ -35,6 +35,7 @@
             deleteButton = new Button();
             saveButton = new Button();
             panelButtons = new Panel();
+            exportButton = new Button();
             cntFindLabel = new Label();
             searchComboBox = new ComboBox();
             filterButton = new Button();
@@ -43,7 +44,6 @@
             addButton = new Button();
             deleteDbButton = new Button();
             closeDbButton = new Button();
-            exportButton = new Button();
             ((System.ComponentModel.ISupportInitialize)mainTable).BeginInit();
             panelButtons.SuspendLayout();
             SuspendLayout();
@@ -89,6 +89,7 @@
             // 
             // saveButton
             // 
+            saveButton.Enabled = false;
             saveButton.Location = new Point(1189, 82);
             saveButton.Name = "saveButton";
             saveButton.Size = new Size(206, 34);
@@ -116,6 +117,16 @@
             panelButtons.Name = "panelButtons";
             panelButtons.Size = new Size(1467, 190);
             panelButtons.TabIndex = 5;
+            // 
+            // exportButton
+            // 
+            exportButton.Location = new Point(1193, 122);
+            exportButton.Name = "exportButton";
+            exportButton.Size = new Size(202, 34);
+            exportButton.TabIndex = 10;
+            exportButton.Text = "Экспортировать";
+            exportButton.UseVisualStyleBackColor = true;
+            exportButton.Click += exportButton_Click;
             // 
             // cntFindLabel
             // 
@@ -193,16 +204,6 @@
             closeDbButton.UseVisualStyleBackColor = true;
             closeDbButton.Click += closeDbButton_Click;
             // 
-            // exportButton
-            // 
-            exportButton.Location = new Point(1193, 122);
-            exportButton.Name = "exportButton";
-            exportButton.Size = new Size(202, 34);
-            exportButton.TabIndex = 10;
-            exportButton.Text = "Экспортировать";
-            exportButton.UseVisualStyleBackColor = true;
-            exportButton.Click += exportButton_Click;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
@@ -226,7 +227,7 @@
         private Button openDbButton;
         private Button createDbButton;
         private Button deleteButton;
-        private Button saveButton;
+        public Button saveButton;
         private Panel panelButtons;
         private Button addButton;
         public Button deleteDbButton;
